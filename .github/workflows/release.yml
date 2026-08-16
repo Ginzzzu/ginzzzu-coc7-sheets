@@ -1,0 +1,184 @@
+name: Build and publish release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version from module.json, for example 0.11.13
+        required: true
+        default: "0.11.13"
+        type: string
+
+      publish_to_foundry:
+        description: Add this version to the Foundry package library
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    env:
+      MODULE_ID: ginzzzu-coc7-sheets
+      RELEASE_VERSION: ${{ inputs.version }}
+      REPOSITORY_URL: https://github.com/Ginzzzu/ginzzzu-coc7-sheets
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate manifest and source files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          manifest_id="$(jq -r '.id' module.json)"
+          manifest_version="$(jq -r '.version' module.json)"
+          manifest_url="$(jq -r '.manifest' module.json)"
+          download_url="$(jq -r '.download' module.json)"
+
+          expected_manifest_url="${REPOSITORY_URL}/releases/latest/download/module.json"
+          expected_download_url="${REPOSITORY_URL}/releases/download/v${RELEASE_VERSION}/${MODULE_ID}.zip"
+
+          test "${manifest_id}" = "${MODULE_ID}" || {
+            echo "module.json id is ${manifest_id}, expected ${MODULE_ID}"
+            exit 1
+          }
+
+          test "${manifest_version}" = "${RELEASE_VERSION}" || {
+            echo "module.json version is ${manifest_version}, workflow input is ${RELEASE_VERSION}"
+            exit 1
+          }
+
+          test "${manifest_url}" = "${expected_manifest_url}" || {
+            echo "Unexpected manifest URL: ${manifest_url}"
+            echo "Expected: ${expected_manifest_url}"
+            exit 1
+          }
+
+          test "${download_url}" = "${expected_download_url}" || {
+            echo "Unexpected download URL: ${download_url}"
+            echo "Expected: ${expected_download_url}"
+            exit 1
+          }
+
+          jq empty module.json
+
+          while IFS= read -r file; do
+            jq empty "${file}"
+          done < <(find lang -type f -name '*.json' | sort)
+
+          while IFS= read -r file; do
+            node --check "${file}"
+          done < <(find scripts -type f -name '*.js' | sort)
+
+          changelog_version="$(awk '/^## [0-9]+\.[0-9]+\.[0-9]+/{print $2; exit}' CHANGELOG.md)"
+
+          test "${changelog_version}" = "${RELEASE_VERSION}" || {
+            echo "CHANGELOG.md starts with version ${changelog_version}, expected ${RELEASE_VERSION}"
+            exit 1
+          }
+
+      - name: Build Foundry package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf dist
+          mkdir -p "dist/package"
+
+          rsync -a ./ "dist/package/" \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='.gitignore' \
+            --exclude='.gitattributes' \
+            --exclude='dist/' \
+            --exclude='*.zip' \
+            --exclude='AGENTS.md' \
+            --exclude='HANDOFF.md'
+
+          (
+            cd dist/package
+            zip -r "../${MODULE_ID}.zip" .
+          )
+
+          cp module.json dist/module.json
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh release create "v${RELEASE_VERSION}" \
+            "dist/${MODULE_ID}.zip" \
+            "dist/module.json" \
+            --target "${GITHUB_SHA}" \
+            --title "Ginzzzu's CoC7 Sheets ${RELEASE_VERSION}" \
+            --generate-notes \
+            --latest
+
+      - name: Publish version to Foundry package library
+        if: ${{ inputs.publish_to_foundry }}
+        env:
+          FOUNDRY_RELEASE_TOKEN: ${{ secrets.FOUNDRY_RELEASE_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -z "${FOUNDRY_RELEASE_TOKEN}" ]; then
+            echo "Repository secret FOUNDRY_RELEASE_TOKEN is not configured."
+            exit 1
+          fi
+
+          minimum="$(jq -r '.compatibility.minimum' module.json)"
+          verified="$(jq -r '.compatibility.verified' module.json)"
+
+          release_manifest="${REPOSITORY_URL}/releases/download/v${RELEASE_VERSION}/module.json"
+          release_notes="${REPOSITORY_URL}/releases/tag/v${RELEASE_VERSION}"
+
+          jq -n \
+            --arg id "${MODULE_ID}" \
+            --arg version "${RELEASE_VERSION}" \
+            --arg manifest "${release_manifest}" \
+            --arg notes "${release_notes}" \
+            --arg minimum "${minimum}" \
+            --arg verified "${verified}" \
+            '{
+              id: $id,
+              release: {
+                version: $version,
+                manifest: $manifest,
+                notes: $notes,
+                compatibility: {
+                  minimum: $minimum,
+                  verified: $verified
+                }
+              }
+            }' > dist/foundry-release.json
+
+          jq '. + {"dry-run": true}' \
+            dist/foundry-release.json \
+            > dist/foundry-release-dry-run.json
+
+          echo "Validating Foundry release request..."
+
+          curl --fail-with-body --silent --show-error \
+            -H 'Content-Type: application/json' \
+            -H "Authorization: ${FOUNDRY_RELEASE_TOKEN}" \
+            --data @dist/foundry-release-dry-run.json \
+            https://foundryvtt.com/_api/packages/release_version/
+
+          echo
+          echo "Publishing Foundry release..."
+
+          curl --fail-with-body --silent --show-error \
+            -H 'Content-Type: application/json' \
+            -H "Authorization: ${FOUNDRY_RELEASE_TOKEN}" \
+            --data @dist/foundry-release.json \
+            https://foundryvtt.com/_api/packages/release_version/

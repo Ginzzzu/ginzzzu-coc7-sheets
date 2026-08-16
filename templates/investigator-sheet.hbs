@@ -1,0 +1,949 @@
+<div class="ginzzzu-coc7-sheets gci-sheet">
+  <header class="gci-header">
+    <div class="gci-portrait-frame">
+      <img class="gci-portrait" src="{{document.img}}"{{#if gci.isEditing}} data-action="editImage" data-edit="img"{{/if}} alt="{{document.name}}">
+      {{#if gci.isEditing}}
+        <input class="gci-portrait-path" type="hidden" name="img" value="{{document.img}}">
+      {{/if}}
+    </div>
+
+    <section class="gci-identity">
+      {{#unless gci.isEditing}}
+        <h1 class="gci-name">{{document.name}}</h1>
+        <div class="gci-role-line">
+          {{#if gci.identity.occupation}}<strong>{{gci.identity.occupation}}</strong>{{/if}}
+          {{#if gci.identity.age}}<span>{{gci.identity.age}}</span>{{/if}}
+          {{#if gci.identity.sex}}<span>{{gci.identity.sex}}</span>{{/if}}
+        </div>
+        <div class="gci-meta-grid">
+          {{#if gci.identity.birthplace}}
+            <div><span>{{localize "ginzzzu-coc7-sheets.Fields.Birthplace"}}</span><strong>{{gci.identity.birthplace}}</strong></div>
+          {{/if}}
+          {{#if gci.identity.residence}}
+            <div><span>{{localize "ginzzzu-coc7-sheets.Fields.Residence"}}</span><strong>{{gci.identity.residence}}</strong></div>
+          {{/if}}
+          {{#if gci.identity.playername}}
+            <div><span>{{localize "ginzzzu-coc7-sheets.Fields.PlayerName"}}</span><strong>{{gci.identity.playername}}</strong></div>
+          {{/if}}
+        </div>
+      {{else}}
+        <label class="gci-field gci-field--name">
+          <span>{{localize "ginzzzu-coc7-sheets.Fields.Name"}}</span>
+          <input type="text" name="name" value="{{document.name}}">
+        </label>
+        <div class="gci-edit-grid">
+          <label class="gci-field">
+            <span>{{localize "ginzzzu-coc7-sheets.Fields.Occupation"}}</span>
+            <input type="text" name="system.infos.occupation" value="{{gci.identity.occupation}}">
+          </label>
+          <label class="gci-field">
+            <span>{{localize "ginzzzu-coc7-sheets.Fields.Age"}}</span>
+            <input type="text" name="system.infos.age" value="{{gci.identity.age}}">
+          </label>
+          <label class="gci-field">
+            <span>{{localize "ginzzzu-coc7-sheets.Fields.Sex"}}</span>
+            <input type="text" name="system.infos.sex" value="{{gci.identity.sex}}">
+          </label>
+          <label class="gci-field">
+            <span>{{localize "ginzzzu-coc7-sheets.Fields.Birthplace"}}</span>
+            <input type="text" name="system.infos.birthplace" value="{{gci.identity.birthplace}}">
+          </label>
+          <label class="gci-field">
+            <span>{{localize "ginzzzu-coc7-sheets.Fields.Residence"}}</span>
+            <input type="text" name="system.infos.residence" value="{{gci.identity.residence}}">
+          </label>
+          <label class="gci-field">
+            <span>{{localize "ginzzzu-coc7-sheets.Fields.PlayerName"}}</span>
+            <input type="text" name="system.infos.playername" value="{{gci.identity.playername}}">
+          </label>
+        </div>
+      {{/unless}}
+
+      <div class="gci-document-context{{#if gci.documentContext.isTokenInstance}} gci-document-context--token{{/if}}">
+        <i class="{{gci.documentContext.icon}}"></i>
+        <span>{{gci.documentContext.label}}</span>
+        {{#if gci.documentContext.detail}}<small>{{gci.documentContext.detail}}</small>{{/if}}
+      </div>
+    </section>
+
+    {{#if gci.canEdit}}
+      <button class="gci-mode-button" type="button" data-action="gci-toggle-edit">
+        {{#unless gci.isEditing}}
+          <i class="fa-solid fa-pen-to-square"></i>
+          <span>{{localize "ginzzzu-coc7-sheets.Actions.Edit"}}</span>
+        {{else}}
+          <i class="fa-solid fa-check"></i>
+          <span>{{localize "ginzzzu-coc7-sheets.Actions.FinishEditing"}}</span>
+        {{/unless}}
+      </button>
+    {{/if}}
+  </header>
+
+  {{#if gci.creationAssistant}}
+    <section class="gci-creation-assistant gci-creation-assistant--{{gci.creationAssistant.mode}}">
+      <div class="gci-creation-assistant__icon"><i class="{{gci.creationAssistant.icon}}"></i></div>
+      <div class="gci-creation-assistant__copy">
+        <strong>{{localize "ginzzzu-coc7-sheets.Sections.CreationAssistant"}}</strong>
+        <span>{{localize gci.creationAssistant.hintKey}}</span>
+        {{#if gci.creationAssistant.step}}
+          <small>
+            <span>{{localize "ginzzzu-coc7-sheets.Fields.CreationStep"}}</span>
+            <strong>{{localize gci.creationAssistant.step.labelKey}}</strong>
+            <span>{{gci.creationAssistant.step.number}} / {{gci.creationAssistant.step.total}}</span>
+          </small>
+        {{/if}}
+      </div>
+      <button class="gci-creation-assistant__action" type="button" data-action="gci-open-creation">
+        <i class="{{gci.creationAssistant.icon}}"></i>
+        <span>{{localize gci.creationAssistant.actionLabelKey}}</span>
+      </button>
+    </section>
+  {{/if}}
+
+  <section class="gci-vitals" aria-label="{{localize 'ginzzzu-coc7-sheets.Sections.Vitals'}}">
+    <article class="gci-vital gci-vital--hp attribute" data-attrib="hp">
+      <span class="gci-vital-label">{{localize "CoC7.HP"}}</span>
+      {{#if gci.isEditing}}
+        <div class="gci-vital-values">
+          <input class="attribute-value" type="number" name="system.attribs.hp.value" value="{{attribs.hp.value}}">
+          <span>/</span>
+          <input type="number" name="system.attribs.hp.max" value="{{attribs.hp.max}}" {{#if (and document.system.attribs.hp.auto (not gci.isKeeper))}}readonly{{/if}}>
+        </div>
+      {{else}}
+        <div class="gci-vital-play">
+          <div class="gci-vital-readout"><strong>{{attribs.hp.value}}</strong><span>/</span><span>{{attribs.hp.max}}</span></div>
+          {{#if gci.canEdit}}
+            <div class="gci-vital-stepper">
+              <button type="button" data-action="gci-adjust-vital" data-attrib="hp" data-delta="1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalIncrease'}}"><i class="fa-solid fa-caret-up"></i></button>
+              <button type="button" data-action="gci-adjust-vital" data-attrib="hp" data-delta="-1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalDecrease'}}"><i class="fa-solid fa-caret-down"></i></button>
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </article>
+
+    <article class="gci-vital gci-vital--mp attribute" data-attrib="mp">
+      <span class="gci-vital-label">{{localize "CoC7.MP"}}</span>
+      {{#if gci.isEditing}}
+        <div class="gci-vital-values">
+          <input class="attribute-value" type="number" name="system.attribs.mp.value" value="{{attribs.mp.value}}">
+          <span>/</span>
+          <input type="number" name="system.attribs.mp.max" value="{{attribs.mp.max}}" {{#if (and document.system.attribs.mp.auto (not gci.isKeeper))}}readonly{{/if}}>
+        </div>
+      {{else}}
+        <div class="gci-vital-play">
+          <div class="gci-vital-readout"><strong>{{attribs.mp.value}}</strong><span>/</span><span>{{attribs.mp.max}}</span></div>
+          {{#if gci.canEdit}}
+            <div class="gci-vital-stepper">
+              <button type="button" data-action="gci-adjust-vital" data-attrib="mp" data-delta="1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalIncrease'}}"><i class="fa-solid fa-caret-up"></i></button>
+              <button type="button" data-action="gci-adjust-vital" data-attrib="mp" data-delta="-1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalDecrease'}}"><i class="fa-solid fa-caret-down"></i></button>
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </article>
+
+    <article class="gci-vital gci-vital--luck attribute" data-attrib="lck">
+      <button class="gci-vital-label gci-attribute-roll" type="button" data-tooltip-key="lck">
+        <i class="fa-solid fa-dice-d20"></i><span>{{localize "CoC7.Luck"}}</span>
+      </button>
+      {{#if gci.isEditing}}
+        <div class="gci-vital-values gci-vital-values--single">
+          <input class="attribute-value" type="number" name="system.attribs.lck.value" value="{{attribs.lck.value}}">
+        </div>
+      {{else}}
+        <div class="gci-vital-play">
+          <div class="gci-vital-readout gci-vital-readout--single"><strong>{{attribs.lck.value}}</strong></div>
+          {{#if gci.canEdit}}
+            <div class="gci-vital-stepper">
+              <button type="button" data-action="gci-adjust-vital" data-attrib="lck" data-delta="1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalIncrease'}}"><i class="fa-solid fa-caret-up"></i></button>
+              <button type="button" data-action="gci-adjust-vital" data-attrib="lck" data-delta="-1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalDecrease'}}"><i class="fa-solid fa-caret-down"></i></button>
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </article>
+
+    <article class="gci-vital gci-vital--san attribute" data-attrib="san">
+      <button class="gci-vital-label gci-attribute-roll" type="button" data-tooltip-key="san">
+        <i class="fa-solid fa-dice-d20"></i><span>{{localize "CoC7.SAN"}}</span>
+      </button>
+      {{#if gci.isEditing}}
+        <div class="gci-vital-values">
+          <input class="attribute-value" type="number" name="system.attribs.san.value" value="{{attribs.san.value}}">
+          <span>/</span>
+          <input type="number" name="system.attribs.san.max" value="{{attribs.san.max}}" {{#if (and document.system.attribs.san.auto (not gci.isKeeper))}}readonly{{/if}}>
+        </div>
+      {{else}}
+        <div class="gci-vital-play">
+          <div class="gci-vital-readout"><strong>{{attribs.san.value}}</strong><span>/</span><span>{{attribs.san.max}}</span></div>
+          {{#if gci.canEdit}}
+            <div class="gci-vital-stepper">
+              <button type="button" data-action="gci-adjust-vital" data-attrib="san" data-delta="1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalIncrease'}}"><i class="fa-solid fa-caret-up"></i></button>
+              <button type="button" data-action="gci-adjust-vital" data-attrib="san" data-delta="-1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalDecrease'}}"><i class="fa-solid fa-caret-down"></i></button>
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </article>
+  </section>
+
+  <nav class="gci-tabs" aria-label="{{localize 'ginzzzu-coc7-sheets.Sections.Workspace'}}">
+    <button class="gci-tab{{#if gci.tabs.characteristics.active}} active{{/if}}" type="button" data-action="gci-select-tab" data-tab="characteristics">
+      <i class="fa-solid fa-chart-simple"></i>
+      <span>{{localize "ginzzzu-coc7-sheets.Tabs.Characteristics"}}</span>
+    </button>
+    <button class="gci-tab{{#if gci.tabs.skills.active}} active{{/if}}" type="button" data-action="gci-select-tab" data-tab="skills">
+      <i class="fa-solid fa-list-check"></i>
+      <span>{{localize "ginzzzu-coc7-sheets.Tabs.Skills"}}</span>
+    </button>
+    <button class="gci-tab{{#if gci.tabs.combat.active}} active{{/if}}" type="button" data-action="gci-select-tab" data-tab="combat">
+      <i class="fa-solid fa-swords"></i>
+      <span>{{localize "ginzzzu-coc7-sheets.Tabs.Combat"}}</span>
+    </button>
+    <button class="gci-tab{{#if gci.tabs.possessions.active}} active{{/if}}" type="button" data-action="gci-select-tab" data-tab="possessions">
+      <i class="fa-solid fa-suitcase"></i>
+      <span>{{localize "ginzzzu-coc7-sheets.Tabs.Possessions"}}</span>
+    </button>
+    <button class="gci-tab{{#if gci.tabs.biography.active}} active{{/if}}" type="button" data-action="gci-select-tab" data-tab="biography">
+      <i class="fa-solid fa-book-open"></i>
+      <span>{{localize "ginzzzu-coc7-sheets.Tabs.Biography"}}</span>
+    </button>
+    <button class="gci-tab{{#if gci.tabs.development.active}} active{{/if}}" type="button" data-action="gci-select-tab" data-tab="development">
+      <i class="fa-solid fa-gears"></i>
+      <span>{{localize "ginzzzu-coc7-sheets.Tabs.Development"}}</span>
+      {{#if gci.development.markedCount}}<span class="gci-tab-badge">{{gci.development.markedCount}}</span>{{/if}}
+    </button>
+    {{#if gci.isKeeper}}
+      <button class="gci-tab gci-tab--keeper{{#if gci.tabs.keeper.active}} active{{/if}}" type="button" data-action="gci-select-tab" data-tab="keeper">
+        <i class="fa-solid fa-eye"></i>
+        <span>{{localize "ginzzzu-coc7-sheets.Tabs.Keeper"}}</span>
+      </button>
+    {{/if}}
+  </nav>
+
+  <main class="gci-workspace gci-scroll-region">
+    {{#if gci.tabs.characteristics.active}}
+      <div class="gci-characteristics-workspace">
+        <section class="gci-panel gci-characteristics-panel">
+          <header class="gci-panel-heading gci-panel-heading--compact">
+            <h2>{{localize "ginzzzu-coc7-sheets.Sections.Characteristics"}}</h2>
+          </header>
+
+          <div class="gci-characteristics">
+            {{#each characteristics as |characteristic key|}}
+              <article class="gci-characteristic attribute{{#if characteristic.activeEffectValue}} gci-characteristic--modified{{/if}}" data-characteristic="{{key}}">
+                {{#unless ../gci.isEditing}}
+                  <button class="gci-characteristic-roll" type="button" draggable="true" data-tooltip-key="{{key}}">
+                    <span class="gci-characteristic-value">{{characteristic.value}}</span>
+                    <strong class="gci-characteristic-label"><span>{{localize characteristic.short}}</span><i class="fa-solid fa-dice-d20 gci-roll-cue"></i></strong>
+                    <span class="gci-thresholds"><span>{{characteristic.hard}}</span><span>{{characteristic.extreme}}</span></span>
+                  </button>
+                {{else}}
+                  <label class="gci-characteristic-edit">
+                    <span>{{localize characteristic.short}}</span>
+                    {{#if ../document.system.flags.displayFormula}}
+                      <input type="text" name="system.characteristics.{{key}}.formula" value="{{characteristic.formula}}">
+                    {{else}}
+                      <input type="number" name="system.characteristics.{{key}}.value" value="{{characteristic.sourceValue}}">
+                    {{/if}}
+                    <small>{{characteristic.hard}} / {{characteristic.extreme}}</small>
+                  </label>
+                {{/unless}}
+              </article>
+            {{/each}}
+          </div>
+        </section>
+
+        <section class="gci-panel gci-derived-panel">
+          <header class="gci-panel-heading gci-panel-heading--compact"><h2>{{localize "ginzzzu-coc7-sheets.Sections.Derived"}}</h2></header>
+          <div class="gci-derived">
+            {{#if gci.isEditing}}
+              <label class="gci-derived-stat attribute" data-attrib="mov">
+                <span>{{localize "CoC7.Mov"}}</span>
+                <input type="text" name="system.attribs.mov.value" value="{{attribs.mov.value}}" {{#if document.system.attribs.mov.auto}}readonly{{/if}}>
+              </label>
+              <div class="gci-derived-stat attribute" data-attrib="db">
+                <span>{{localize "CoC7.DB"}}</span>
+                <input type="text" name="system.attribs.db.value" value="{{attribs.db.value}}" {{#if document.system.attribs.db.auto}}readonly{{/if}}>
+              </div>
+              <label class="gci-derived-stat attribute" data-attrib="build">
+                <span>{{localize "CoC7.Build"}}</span>
+                <input type="text" name="system.attribs.build.value" value="{{attribs.build.value}}" {{#if document.system.attribs.build.auto}}readonly{{/if}}>
+              </label>
+              <label class="gci-derived-stat attribute" data-attrib="armor">
+                <span>{{localize "CoC7.Armor"}}</span>
+                <input type="text" name="system.attribs.armor.value" value="{{attribs.armor.value}}">
+              </label>
+            {{else}}
+              <div class="gci-derived-stat gci-derived-stat--static attribute" data-attrib="mov">
+                <span>{{localize "CoC7.Mov"}}</span><strong>{{attribs.mov.value}}</strong>
+              </div>
+              <button class="gci-derived-stat gci-derived-stat--action gci-attribute-roll attribute" type="button" data-attrib="db">
+                <span><i class="fa-solid fa-dice-d20"></i>{{localize "CoC7.DB"}}</span><strong>{{attribs.db.value}}</strong>
+              </button>
+              <div class="gci-derived-stat gci-derived-stat--static attribute" data-attrib="build">
+                <span>{{localize "CoC7.Build"}}</span><strong>{{attribs.build.value}}</strong>
+              </div>
+              <div class="gci-derived-stat gci-derived-stat--static attribute" data-attrib="armor">
+                <span>{{localize "CoC7.Armor"}}</span><strong>{{attribs.armor.value}}</strong>
+              </div>
+            {{/if}}
+          </div>
+        </section>
+
+        <section class="gci-panel gci-conditions-panel">
+          <header class="gci-panel-heading gci-panel-heading--compact"><h2>{{localize "ginzzzu-coc7-sheets.Sections.Conditions"}}</h2></header>
+          <div class="gci-condition-grid">
+            {{#each gci.conditions as |condition|}}
+              <button
+                class="gci-condition{{#if condition.active}} active{{/if}}"
+                type="button"
+                data-action="gci-toggle-condition"
+                data-condition="{{condition.key}}"
+                data-tooltip="{{condition.label}}"
+                {{#unless ../gci.canToggleConditions}}disabled{{/unless}}
+              >
+                <i class="{{condition.icon}}"></i>
+                <span>{{condition.label}}</span>
+              </button>
+            {{/each}}
+          </div>
+        </section>
+      </div>
+    {{/if}}
+
+    {{#if gci.tabs.skills.active}}
+      <section class="gci-panel gci-skills-panel">
+        <header class="gci-panel-heading gci-skills-heading">
+          <div>
+            <h2>{{localize "ginzzzu-coc7-sheets.Sections.Skills"}}</h2>
+            <p>{{localize "ginzzzu-coc7-sheets.Hints.SkillRollHelp"}}</p>
+          </div>
+          <div class="gci-skills-counter">{{gci.skills.visibleCount}} / {{gci.skills.totalCount}}</div>
+        </header>
+
+        <div class="gci-skills-toolbar">
+          <label class="gci-skill-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+              type="search"
+              value="{{gci.skills.search}}"
+              data-action="gci-skill-search"
+              placeholder="{{localize 'ginzzzu-coc7-sheets.Placeholders.SkillSearch'}}"
+            >
+          </label>
+          <div class="gci-skill-filters">
+            {{#each gci.skills.filters as |filter|}}
+              <button class="gci-filter-button{{#if filter.active}} active{{/if}}" type="button" data-action="gci-skill-filter" data-filter="{{filter.id}}">{{filter.label}}</button>
+            {{/each}}
+          </div>
+          {{#if gci.isEditing}}
+            <button class="gci-add-skill" type="button" data-action="gci-add-skill">
+              <i class="fa-solid fa-plus"></i>
+              <span>{{localize "ginzzzu-coc7-sheets.Actions.AddSkill"}}</span>
+            </button>
+          {{/if}}
+        </div>
+
+        {{#if gci.skills.skills.length}}
+          {{#unless gci.isEditing}}
+            <div class="gci-skill-list gci-skill-list--play">
+              <div class="gci-skill-row gci-skill-row--play gci-skill-row--header">
+                <span></span>
+                <span>{{localize "ginzzzu-coc7-sheets.Fields.Skill"}}</span>
+                <span>{{localize "ginzzzu-coc7-sheets.Fields.Regular"}}</span>
+                <span>{{localize "ginzzzu-coc7-sheets.Fields.Hard"}}</span>
+                <span>{{localize "ginzzzu-coc7-sheets.Fields.Extreme"}}</span>
+                <span>{{localize "ginzzzu-coc7-sheets.Fields.Development"}}</span>
+              </div>
+              {{#each gci.skills.skills as |skill|}}
+                <article class="gci-skill-row gci-skill-row--play{{#if skill.isOccupation}} gci-skill-row--occupation{{/if}}{{#if skill.isCombat}} gci-skill-row--combat{{/if}}" data-item-id="{{skill.id}}">
+                  <img class="gci-skill-icon" src="{{skill.img}}" alt="">
+                  <button class="gci-skill-name" type="button" data-action="gci-skill-roll" data-tooltip="{{skill.name}}">
+                    <span>{{skill.displayName}}</span>
+                    <small>
+                      {{#if skill.isOccupation}}<i class="fa-solid fa-briefcase" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Filters.Occupation'}}"></i>{{/if}}
+                      {{#if skill.isCombat}}<i class="fa-solid fa-crosshairs" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Filters.Combat'}}"></i>{{/if}}
+                      <i class="fa-solid fa-dice-d20 gci-roll-cue"></i>
+                    </small>
+                  </button>
+                  <strong>{{skill.value}}</strong>
+                  <span>{{skill.hard}}</span>
+                  <span>{{skill.extreme}}</span>
+                  <button
+                    class="gci-development-toggle{{#if skill.developmentMarked}} active{{/if}}"
+                    type="button"
+                    data-action="gci-toggle-development"
+                    data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.DevelopmentMark'}}"
+                    {{#unless skill.canMarkDevelopment}}disabled{{/unless}}
+                  >
+                    {{#if skill.developmentMarked}}<i class="fa-solid fa-circle-check"></i>{{else}}<i class="fa-regular fa-circle"></i>{{/if}}
+                  </button>
+                </article>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="gci-skill-list gci-skill-list--edit{{#if gci.skills.showArchetype}} gci-skill-list--archetype{{/if}}{{#if gci.skills.showExperiencePackage}} gci-skill-list--experience-package{{/if}}">
+              <div class="gci-skill-edit-row gci-skill-edit-row--header">
+                <span></span>
+                <span>{{localize "ginzzzu-coc7-sheets.Fields.Skill"}}</span>
+                <span>{{localize "CoC7.SkillBase"}}</span>
+                <span>{{localize "CoC7.SkillPersonal"}}</span>
+                <span>{{localize "CoC7.SkillOccupation"}}</span>
+                {{#if gci.skills.showArchetype}}<span>{{localize "CoC7.SkillArchetype"}}</span>{{/if}}
+                {{#if gci.skills.showExperiencePackage}}<span>{{localize "ginzzzu-coc7-sheets.Fields.ExperiencePackage"}}</span>{{/if}}
+                <span>{{localize "CoC7.SkillExperience"}}</span>
+                <span>{{localize "CoC7.Value"}}</span>
+                <span></span>
+              </div>
+              {{#each gci.skills.skills as |skill|}}
+                <article class="gci-skill-edit-row{{#if skill.isOccupation}} gci-skill-row--occupation{{/if}}" data-item-id="{{skill.id}}">
+                  <img class="gci-skill-icon" src="{{skill.img}}" alt="">
+                  <div class="gci-skill-edit-name">
+                    <span>{{skill.displayName}}</span>
+                    <button class="gci-occupation-toggle{{#if skill.isOccupation}} active{{/if}}" type="button" data-action="gci-toggle-occupation-skill" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.OccupationSkillToggle'}}">
+                      <i class="fa-solid fa-briefcase"></i>
+                    </button>
+                  </div>
+                  <span class="gci-adjustment-readonly">{{skill.adjustments.base}}</span>
+                  <input type="number" value="{{skill.adjustments.personal}}" data-action="gci-skill-adjustment" data-adjustment="personal" {{#unless skill.canMarkDevelopment}}readonly{{/unless}}>
+                  <input type="number" value="{{skill.adjustments.occupation}}" data-action="gci-skill-adjustment" data-adjustment="occupation" {{#unless skill.isOccupation}}readonly{{/unless}}>
+                  {{#if ../gci.skills.showArchetype}}
+                    <input type="number" value="{{skill.adjustments.archetype}}" data-action="gci-skill-adjustment" data-adjustment="archetype" {{#unless skill.hasArchetype}}readonly{{/unless}}>
+                  {{/if}}
+                  {{#if ../gci.skills.showExperiencePackage}}
+                    <input type="number" value="{{skill.adjustments.experiencePackage}}" data-action="gci-skill-adjustment" data-adjustment="experiencePackage" {{#unless skill.hasExperiencePackage}}readonly{{/unless}}>
+                  {{/if}}
+                  <input type="number" value="{{skill.adjustments.experience}}" data-action="gci-skill-adjustment" data-adjustment="experience">
+                  <strong>{{skill.value}}</strong>
+                  <button class="gci-skill-edit-button" type="button" data-action="gci-edit-skill" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Actions.SkillDetails'}}"><i class="fa-solid fa-pen"></i></button>
+                </article>
+              {{/each}}
+            </div>
+          {{/unless}}
+        {{else}}
+          <div class="gci-empty-state">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>{{localize "ginzzzu-coc7-sheets.Empty.FilteredSkills"}}</span>
+          </div>
+        {{/if}}
+      </section>
+    {{/if}}
+
+    {{#if gci.tabs.combat.active}}
+      <section class="gci-panel gci-combat-panel">
+        <header class="gci-panel-heading gci-combat-heading">
+          <div>
+            <h2>{{localize "ginzzzu-coc7-sheets.Sections.Combat"}}</h2>
+            <p>{{localize "ginzzzu-coc7-sheets.Hints.WeaponRoll"}}</p>
+          </div>
+          {{#if gci.isEditing}}
+            <button class="gci-add-weapon" type="button" data-action="gci-add-weapon">
+              <i class="fa-solid fa-plus"></i>
+              <span>{{localize "ginzzzu-coc7-sheets.Actions.AddWeapon"}}</span>
+            </button>
+          {{/if}}
+        </header>
+
+        <div class="gci-weapon-list">
+          {{#each gci.weapons as |weapon|}}
+            <article class="gci-weapon-card item" data-item-uuid="{{weapon.uuid}}">
+              <img class="gci-weapon-image" src="{{weapon.img}}" alt="">
+              <div class="gci-weapon-body">
+                <div class="gci-weapon-title-row">
+                  <div class="gci-weapon-title">
+                    <h3>{{weapon.name}}</h3>
+                    {{#if weapon.propertyLabels.length}}
+                      <div class="gci-weapon-tags">
+                        {{#each weapon.propertyLabels as |label|}}<span>{{label}}</span>{{/each}}
+                      </div>
+                    {{/if}}
+                  </div>
+                  {{#if ../gci.isEditing}}
+                    <div class="gci-weapon-edit-controls">
+                      <button type="button" data-action="gci-edit-weapon" data-tooltip="CoC7.EditWeapon"><i class="fa-solid fa-pen"></i></button>
+                      <button class="danger" type="button" data-action="gci-delete-weapon" data-tooltip="CoC7.DeleteWeapon"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  {{/if}}
+                </div>
+
+                <div class="gci-weapon-primary-row">
+                  <button class="gci-combat-action gci-combat-action--attack" type="button" data-action="gci-weapon-roll">
+                    <i class="fa-solid fa-crosshairs"></i>
+                    <span>{{localize "ginzzzu-coc7-sheets.Actions.Attack"}}</span>
+                  </button>
+
+                  {{#if weapon.mainSkill}}
+                    <button class="gci-combat-action" type="button" data-action="gci-weapon-skill-roll" data-skill-uuid="{{weapon.mainSkill.uuid}}" data-tooltip="{{weapon.mainSkill.name}}">
+                      <span class="gci-combat-action-label"><i class="fa-solid fa-dice-d20"></i>{{localize "ginzzzu-coc7-sheets.Actions.CheckSkill"}}</span>
+                      <strong>{{weapon.mainSkill.value}}%</strong>
+                    </button>
+                  {{else}}
+                    <span class="gci-combat-action gci-combat-action--disabled">{{localize "ginzzzu-coc7-sheets.Empty.WeaponSkill"}}</span>
+                  {{/if}}
+
+                  {{#if weapon.canRollDamage}}
+                    <button class="gci-combat-action" type="button" data-action="gci-weapon-damage-roll" data-damage-range="{{weapon.primaryDamageRange}}" data-tooltip="{{weapon.damageTooltip}}">
+                      <span class="gci-combat-action-label"><i class="fa-solid fa-burst"></i>{{localize "ginzzzu-coc7-sheets.Actions.RollDamage"}}</span>
+                      <strong>{{weapon.primaryDamage}}</strong>
+                    </button>
+                  {{/if}}
+
+                  {{#if weapon.usesPerRound}}
+                    <div class="gci-weapon-stat">
+                      <span class="gci-weapon-stat-label"><i class="fa-solid fa-forward"></i>{{localize "ginzzzu-coc7-sheets.Fields.AttacksPerRound"}}</span>
+                      <strong class="gci-weapon-stat-number">{{weapon.usesPerRound}}</strong>
+                    </div>
+                  {{/if}}
+
+                  {{#if weapon.hasMalfunction}}
+                    <div class="gci-weapon-stat">
+                      <span class="gci-weapon-stat-label"><i class="fa-solid fa-triangle-exclamation"></i>{{localize "CoC7.WeaponMalfunction"}}</span>
+                      <strong class="gci-weapon-stat-number">{{weapon.malfunction}}</strong>
+                    </div>
+                  {{/if}}
+                </div>
+
+                {{#if weapon.alternativeSkill}}
+                  <button class="gci-weapon-alt-skill" type="button" data-action="gci-weapon-skill-roll" data-skill-uuid="{{weapon.alternativeSkill.uuid}}">
+                    <i class="fa-solid fa-shuffle"></i>
+                    <span>{{weapon.alternativeSkill.name}}</span>
+                    <strong>{{weapon.alternativeSkill.value}}%</strong>
+                  </button>
+                {{/if}}
+
+                {{#if (or weapon.isRanged weapon.hasMultipleDamageRanges)}}
+                  <div class="gci-weapon-ranges">
+                    {{#each weapon.damageRanges as |range|}}
+                      <button type="button" data-action="gci-weapon-damage-roll" data-damage-range="{{range.key}}" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.DamageRoll' formula=range.damage}}">
+                        <span class="gci-range-label">{{range.label}}</span>
+                        {{#if range.distance}}<span class="gci-range-distance">{{range.distance}}</span>{{/if}}
+                        <strong class="gci-range-damage">{{range.damage}}</strong>
+                      </button>
+                    {{/each}}
+                  </div>
+                {{/if}}
+              </div>
+
+              {{#if weapon.hasAmmoTracker}}
+                <div class="gci-ammo-block">
+                  <span>{{localize "ginzzzu-coc7-sheets.Fields.Ammo"}}</span>
+                  <strong>{{weapon.ammo}} / {{weapon.bullets}}</strong>
+                  {{#if ../gci.canEdit}}
+                    <button type="button" data-action="gci-reload-weapon" data-tooltip="CoC7.Reload">
+                      <i class="fa-solid fa-rotate"></i>
+                    </button>
+                  {{/if}}
+                </div>
+              {{/if}}
+            </article>
+          {{else}}
+            <div class="gci-empty-state">
+              <i class="fa-solid fa-swords"></i>
+              <span>{{localize "ginzzzu-coc7-sheets.Empty.Weapons"}}</span>
+            </div>
+          {{/each}}
+        </div>
+      </section>
+    {{/if}}
+
+    {{#if gci.tabs.possessions.active}}
+      <section class="gci-panel gci-possessions-panel">
+        <header class="gci-panel-heading gci-possessions-heading">
+          <div>
+            <h2>{{localize "ginzzzu-coc7-sheets.Sections.Possessions"}}</h2>
+            <p>{{localize "ginzzzu-coc7-sheets.Hints.Possessions"}}</p>
+          </div>
+        </header>
+
+        <div class="gci-possessions-layout">
+          <div class="gci-inventory-groups">
+            {{#each gci.inventory.groups as |group|}}
+              {{#if (or group.items.length group.canAdd)}}
+                <section class="gci-inventory-group gci-inventory-group--{{group.id}}">
+                  <header class="gci-inventory-group-heading">
+                    <div>
+                      <i class="{{group.icon}}"></i>
+                      <h3>{{group.label}}</h3>
+                      <span>{{group.items.length}}</span>
+                    </div>
+                    {{#if group.canAdd}}
+                      <button type="button" data-action="gci-add-item" data-type="{{group.id}}" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Actions.AddInventoryItem' type=group.label}}">
+                        <i class="fa-solid fa-plus"></i>
+                      </button>
+                    {{/if}}
+                  </header>
+
+                  <div class="gci-inventory-list">
+                    {{#each group.items as |item|}}
+                      <article class="gci-inventory-item item" data-item-uuid="{{item.uuid}}">
+                        <button class="gci-inventory-item-main" type="button" data-action="gci-open-item" data-tooltip="{{item.name}}">
+                          <img src="{{item.img}}" alt="">
+                          <span>
+                            <strong>{{item.name}}</strong>
+                            {{#if item.quantity}}<small>{{localize "ginzzzu-coc7-sheets.Fields.Quantity"}}: {{item.quantity}}</small>{{/if}}
+                          </span>
+                          <i class="fa-solid fa-chevron-right gci-open-cue"></i>
+                        </button>
+                        {{#if group.canDelete}}
+                          <button class="gci-inventory-item-delete" type="button" data-action="gci-delete-item" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Actions.DeleteInventoryItem'}}">
+                            <i class="fa-solid fa-trash"></i>
+                          </button>
+                        {{/if}}
+                      </article>
+                    {{else}}
+                      <div class="gci-inventory-empty">{{localize "ginzzzu-coc7-sheets.Empty.InventoryGroup"}}</div>
+                    {{/each}}
+                  </div>
+                </section>
+              {{/if}}
+            {{/each}}
+
+            {{#unless gci.inventory.hasItems}}
+              {{#unless gci.isEditing}}
+                <div class="gci-empty-state gci-inventory-empty-state">
+                  <i class="fa-solid fa-suitcase"></i>
+                  <span>{{localize "ginzzzu-coc7-sheets.Empty.Inventory"}}</span>
+                </div>
+              {{/unless}}
+            {{/unless}}
+          </div>
+
+          <section class="gci-finance-card">
+            <header class="gci-finance-heading">
+              <div>
+                <h3>{{localize "ginzzzu-coc7-sheets.Sections.Finances"}}</h3>
+                <span>{{localize "ginzzzu-coc7-sheets.Fields.CreditRating"}}: <strong>{{gci.inventory.creditRating}}%</strong>{{#if gci.inventory.creditTier}} · {{gci.inventory.creditTier}}{{/if}}</span>
+              </div>
+              {{#if gci.isEditing}}
+                <button class="gci-manual-credit-toggle{{#if gci.inventory.manualCredit}} active{{/if}}" type="button" data-action="gci-toggle-manual-credit" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.ManualCredit'}}">
+                  <i class="fa-solid fa-gears"></i>
+                  <span>{{#if gci.inventory.manualCredit}}{{localize "ginzzzu-coc7-sheets.Values.Manual"}}{{else}}{{localize "ginzzzu-coc7-sheets.Values.Automatic"}}{{/if}}</span>
+                </button>
+              {{/if}}
+            </header>
+
+            <div class="gci-money-grid">
+              <label class="gci-money-stat">
+                <span>{{localize "CoC7.MonetarySpendingLevel"}}</span>
+                {{#if (and gci.isEditing gci.inventory.manualCredit)}}
+                  <input type="text" name="system.monetary.spendingLevel" value="{{document.system.monetary.spendingLevel}}">
+                {{else}}
+                  <strong>{{gci.inventory.money.spendingLevel}}</strong>
+                {{/if}}
+              </label>
+              <label class="gci-money-stat">
+                <span>{{localize "CoC7.MonetaryCash"}}</span>
+                {{#if (and gci.isEditing gci.inventory.manualCredit)}}
+                  <input type="text" name="system.monetary.cash" value="{{document.system.monetary.cash}}">
+                {{else}}
+                  <strong>{{gci.inventory.money.cash}}</strong>
+                {{/if}}
+              </label>
+              <label class="gci-money-stat">
+                <span>{{localize "CoC7.MonetarySpent"}}</span>
+                {{#if gci.isEditing}}
+                  <input type="text" name="system.monetary.spent" value="{{document.system.monetary.spent}}">
+                {{else}}
+                  <strong>{{#if gci.inventory.money.spent}}{{gci.inventory.money.spent}}{{else}}—{{/if}}</strong>
+                {{/if}}
+              </label>
+              <label class="gci-money-stat">
+                <span>{{localize "CoC7.MonetaryAssets"}}</span>
+                {{#if (and gci.isEditing gci.inventory.manualCredit)}}
+                  <input type="text" name="system.monetary.assets" value="{{document.system.monetary.assets}}">
+                {{else}}
+                  <strong>{{gci.inventory.money.assets}}</strong>
+                {{/if}}
+              </label>
+            </div>
+
+            <div class="gci-finance-details">
+              <div>
+                <h4>{{localize "CoC7.MonetaryAssetsDetails"}}</h4>
+                {{#if gci.isEditing}}
+                  <textarea name="system.monetary.assetsDetails" rows="5" placeholder="{{localize 'CoC7.MonetaryAssetsDetails'}}">{{document.system.monetary.assetsDetails}}</textarea>
+                {{else}}
+                  <div class="gci-finance-text{{#unless gci.inventory.money.assetsDetails}} empty{{/unless}}">{{#if gci.inventory.money.assetsDetails}}{{gci.inventory.money.assetsDetails}}{{else}}—{{/if}}</div>
+                {{/if}}
+              </div>
+              <div>
+                <h4>{{localize "CoC7.PossessionsNotes"}}</h4>
+                {{#if gci.isEditing}}
+                  <textarea name="system.notes" rows="5" placeholder="{{localize 'CoC7.PossessionsNotesHolder'}}">{{document.system.notes}}</textarea>
+                {{else}}
+                  <div class="gci-finance-text{{#unless gci.inventory.money.notes}} empty{{/unless}}">{{#if gci.inventory.money.notes}}{{gci.inventory.money.notes}}{{else}}—{{/if}}</div>
+                {{/if}}
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    {{/if}}
+
+
+    {{#if gci.tabs.development.active}}
+      <section class="gci-panel gci-development-panel">
+        <header class="gci-panel-heading gci-development-heading">
+          <div>
+            <h2>{{localize "ginzzzu-coc7-sheets.Sections.Development"}}</h2>
+            <p>{{localize "ginzzzu-coc7-sheets.Hints.Development"}}</p>
+          </div>
+          <div class="gci-development-actions">
+            {{#if gci.development.allowDevelopment}}
+              <button class="gci-development-phase{{#if gci.development.hasDevelopmentPhase}} ready{{/if}}" type="button" data-action="gci-development-phase" {{#unless gci.development.hasDevelopmentPhase}}disabled{{/unless}}>
+                <i class="fa-solid fa-dice-d10"></i>
+                <span>{{localize "ginzzzu-coc7-sheets.Actions.RunDevelopmentPhase"}}</span>
+              </button>
+            {{else}}
+              <span class="gci-development-disabled"><i class="fa-solid fa-lock"></i>{{localize "ginzzzu-coc7-sheets.Messages.DevelopmentDisabled"}}</span>
+            {{/if}}
+            {{#if gci.development.developmentRollForLuck}}
+              <button class="gci-luck-development" type="button" data-action="gci-develop-luck">
+                <i class="fa-solid fa-clover"></i>
+                <span>{{localize "CoC7.RecoverLuckPoints"}}</span>
+              </button>
+            {{/if}}
+          </div>
+        </header>
+
+        <div class="gci-development-summary">
+          <div class="gci-development-summary-card">
+            <span>{{localize "ginzzzu-coc7-sheets.Fields.MarkedSkills"}}</span>
+            <strong>{{gci.development.markedCount}}</strong>
+          </div>
+          <div class="gci-development-summary-card">
+            <span>{{localize "ginzzzu-coc7-sheets.Fields.ExperiencePoints"}}</span>
+            <strong>{{gci.development.experiencePoints}}</strong>
+          </div>
+          <div class="gci-development-summary-note">
+            <i class="fa-solid fa-forward-fast"></i>
+            <span>{{localize "ginzzzu-coc7-sheets.Hints.DevelopmentShift"}}</span>
+          </div>
+        </div>
+
+        <div class="gci-development-layout">
+          <section class="gci-development-skills">
+            <div class="gci-subsection-heading">
+              <div>
+                <h3>{{localize "ginzzzu-coc7-sheets.Sections.DevelopmentSkills"}}</h3>
+                <p>{{localize "ginzzzu-coc7-sheets.Hints.DevelopmentSkills"}}</p>
+              </div>
+            </div>
+            {{#if gci.development.markedSkills.length}}
+              <div class="gci-development-skill-list">
+                {{#each gci.development.markedSkills as |skill|}}
+                  <article class="gci-development-skill" data-item-id="{{skill.id}}" data-skill-uuid="{{skill.uuid}}">
+                    <img src="{{skill.img}}" alt="">
+                    <div class="gci-development-skill-name">
+                      <strong>{{skill.name}}</strong>
+                      <span>{{localize "ginzzzu-coc7-sheets.Fields.Regular"}} {{skill.value}} · {{localize "ginzzzu-coc7-sheets.Fields.Hard"}} {{skill.hard}} · {{localize "ginzzzu-coc7-sheets.Fields.Extreme"}} {{skill.extreme}}</span>
+                    </div>
+                    {{#if ../gci.development.allowDevelopment}}
+                      <button class="gci-develop-skill-button" type="button" data-action="gci-develop-skill">
+                        <i class="fa-solid fa-dice-d10"></i>
+                        <span>{{localize "ginzzzu-coc7-sheets.Actions.DevelopSkill"}}</span>
+                      </button>
+                    {{/if}}
+                    <button class="gci-development-unmark" type="button" data-action="gci-toggle-development" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Actions.RemoveDevelopmentMark'}}">
+                      <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                  </article>
+                {{/each}}
+              </div>
+            {{else}}
+              <div class="gci-empty-state gci-development-empty">
+                <i class="fa-regular fa-circle-check"></i>
+                <span>{{localize "ginzzzu-coc7-sheets.Empty.DevelopmentSkills"}}</span>
+              </div>
+            {{/if}}
+          </section>
+
+          <aside class="gci-development-points">
+            <div class="gci-subsection-heading">
+              <div>
+                <h3>{{localize "ginzzzu-coc7-sheets.Sections.CreationPoints"}}</h3>
+                <p>{{localize "ginzzzu-coc7-sheets.Hints.CreationPoints"}}</p>
+              </div>
+            </div>
+            <div class="gci-point-pools">
+              {{#each gci.development.pointPools as |pool|}}
+                <div class="gci-point-pool{{#unless pool.valid}} warning{{/unless}}">
+                  <div class="gci-point-pool-line">
+                    <span>{{pool.label}}</span>
+                    <strong>{{pool.spent}} / {{pool.target}}</strong>
+                  </div>
+                  <div class="gci-point-progress"><span style="width: {{pool.percent}}%"></span></div>
+                </div>
+              {{/each}}
+              <div class="gci-point-pool gci-point-pool--experience">
+                <div class="gci-point-pool-line">
+                  <span>{{localize "ginzzzu-coc7-sheets.Fields.ExperiencePoints"}}</span>
+                  <strong>{{gci.development.experiencePoints}}</strong>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    {{/if}}
+
+    {{#if gci.tabs.biography.active}}
+      <section class="gci-panel gci-biography-panel">
+        <header class="gci-panel-heading gci-biography-heading">
+          <div>
+            <h2>{{localize "ginzzzu-coc7-sheets.Sections.Biography"}}</h2>
+            <p>{{localize "ginzzzu-coc7-sheets.Hints.Biography"}}</p>
+          </div>
+          {{#if (and gci.isEditing (not gci.biography.oneBlock))}}
+            <button class="gci-biography-add" type="button" data-action="gci-biography-add">
+              <i class="fa-solid fa-plus"></i>
+              <span>{{localize "ginzzzu-coc7-sheets.Actions.AddBiographySection"}}</span>
+            </button>
+          {{/if}}
+        </header>
+
+        {{#if gci.biography.oneBlock}}
+          <article class="gci-biography-card gci-biography-card--single">
+            {{#if gci.isEditing}}
+              <prose-mirror name="system.backstory" value="{{gci.biography.backstory}}" data-document-uuid="{{document.uuid}}" toggled>{{{gci.biography.enrichedBackstory}}}</prose-mirror>
+            {{else}}
+              <div class="gci-rich-text{{#unless gci.biography.hasContent}} empty{{/unless}}">
+                {{#if gci.biography.hasContent}}{{{gci.biography.enrichedBackstory}}}{{else}}{{localize "ginzzzu-coc7-sheets.Empty.Biography"}}{{/if}}
+              </div>
+            {{/if}}
+          </article>
+        {{else}}
+          <div class="gci-biography-sections">
+            {{#each gci.biography.sections as |section|}}
+              <article class="gci-biography-card" data-biography-index="{{section.index}}">
+                <header class="gci-biography-card-heading">
+                  {{#if ../gci.isEditing}}
+                    <input class="gci-biography-title-input" type="text" name="system.biography.{{section.index}}.title" value="{{section.title}}" placeholder="{{localize 'CoC7.BackgroundSectionNameHolder'}}">
+                    <div class="gci-biography-controls">
+                      <button type="button" data-action="gci-biography-move" data-direction="-1" data-tooltip="CoC7.BackgroundSectionMoveUp" {{#if section.isFirst}}disabled{{/if}}><i class="fa-solid fa-caret-up"></i></button>
+                      <button type="button" data-action="gci-biography-move" data-direction="1" data-tooltip="CoC7.BackgroundSectionMoveDown" {{#if section.isLast}}disabled{{/if}}><i class="fa-solid fa-caret-down"></i></button>
+                      <button class="gci-biography-remove" type="button" data-action="gci-biography-remove" data-tooltip="CoC7.BackgroundDeleteSection"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  {{else}}
+                    <h3>{{#if section.title}}{{section.title}}{{else}}{{localize "ginzzzu-coc7-sheets.Values.UntitledBiographySection"}}{{/if}}</h3>
+                  {{/if}}
+                </header>
+                {{#if ../gci.isEditing}}
+                  <prose-mirror name="system.biography.{{section.index}}.value" value="{{section.value}}" data-document-uuid="{{../document.uuid}}" toggled>{{{section.enriched}}}</prose-mirror>
+                {{else}}
+                  <div class="gci-rich-text{{#unless section.value}} empty{{/unless}}">{{#if section.value}}{{{section.enriched}}}{{else}}{{localize "ginzzzu-coc7-sheets.Fields.NotSet"}}{{/if}}</div>
+                {{/if}}
+              </article>
+            {{else}}
+              <div class="gci-empty-state gci-biography-empty">
+                <i class="fa-solid fa-book-open"></i>
+                <span>{{localize "ginzzzu-coc7-sheets.Empty.Biography"}}</span>
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
+      </section>
+    {{/if}}
+
+    {{#if gci.tabs.keeper.active}}
+      <div class="gci-keeper-layout">
+        <div class="gci-keeper-grid">
+          <section class="gci-panel gci-sanity-panel">
+            <header class="gci-panel-heading gci-event-heading">
+              <h2>{{localize "ginzzzu-coc7-sheets.Sections.SanityControl"}}</h2>
+              <button type="button" data-action="gci-reset-daily-sanity" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Actions.ResetDailySanity'}}" aria-label="{{localize 'ginzzzu-coc7-sheets.Actions.ResetDailySanity'}}"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+            </header>
+            <div class="gci-sanity-summary">
+              <div><span>{{localize "ginzzzu-coc7-sheets.Fields.Sanity"}}</span><strong>{{gci.keeper.sanity.value}} / {{gci.keeper.sanity.max}}</strong></div>
+              <div><span>{{localize "ginzzzu-coc7-sheets.Fields.DailySanLoss"}}</span><strong>{{gci.keeper.sanity.dailyLoss}} / {{gci.keeper.sanity.dailyLimit}}</strong></div>
+            </div>
+          </section>
+
+          <section class="gci-panel gci-sanity-events-panel">
+            <header class="gci-panel-heading gci-event-heading">
+              <h2>{{localize "ginzzzu-coc7-sheets.Sections.SanityLossEncounters"}}</h2>
+              <button type="button" data-action="gci-sanity-event-add" data-type="encounter" data-tooltip="CoC7.AddSanityLossEncounter"><i class="fa-solid fa-plus"></i></button>
+            </header>
+            <div class="gci-sanity-event-list">
+              {{#each gci.keeper.encounters as |event|}}
+                <div class="gci-sanity-event" data-sanity-index="{{event.index}}">
+                  <input type="text" name="system.sanityLossEvents.{{event.index}}.type" value="{{event.type}}" placeholder="{{localize 'CoC7.SanityLossTypeReason'}}">
+                  <input class="gci-sanity-loss-value" type="text" name="system.sanityLossEvents.{{event.index}}.totalLoss" value="{{event.totalLoss}}" placeholder="{{localize 'CoC7.SanityLossTypeValue'}}">
+                  <button type="button" data-action="gci-sanity-event-delete" data-tooltip="CoC7.DeleteSanityLossEncounter"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              {{else}}
+                <div class="gci-inline-empty">{{localize "ginzzzu-coc7-sheets.Empty.SanityEncounters"}}</div>
+              {{/each}}
+            </div>
+          </section>
+
+          <section class="gci-panel gci-sanity-events-panel">
+            <header class="gci-panel-heading gci-event-heading">
+              <h2>{{localize "ginzzzu-coc7-sheets.Sections.SanityLossImmunities"}}</h2>
+              <button type="button" data-action="gci-sanity-event-add" data-type="immunity" data-tooltip="CoC7.AddSanityLossImmunity"><i class="fa-solid fa-plus"></i></button>
+            </header>
+            <div class="gci-sanity-event-list">
+              {{#each gci.keeper.immunities as |event|}}
+                <div class="gci-sanity-event gci-sanity-event--immunity" data-sanity-index="{{event.index}}">
+                  <i class="fa-solid fa-shield-halved"></i>
+                  <input type="text" name="system.sanityLossEvents.{{event.index}}.type" value="{{event.type}}" placeholder="{{localize 'CoC7.SanityLossTypeReason'}}">
+                  <button type="button" data-action="gci-sanity-event-delete" data-tooltip="CoC7.DeleteSanityLossImmunity"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              {{else}}
+                <div class="gci-inline-empty">{{localize "ginzzzu-coc7-sheets.Empty.SanityImmunities"}}</div>
+              {{/each}}
+            </div>
+          </section>
+
+          <section class="gci-panel gci-book-progress-panel">
+            <header class="gci-panel-heading"><h2>{{localize "ginzzzu-coc7-sheets.Sections.MythosBooks"}}</h2></header>
+            <div class="gci-book-progress-list">
+              {{#each gci.keeper.books as |book|}}
+                <article class="gci-book-progress" data-book-index="{{book.index}}">
+                  <div>
+                    <strong>{{book.name}}</strong>
+                    <span>{{book.summary}}</span>
+                  </div>
+                  <div class="gci-book-progress-meter"><span style="width: {{book.currentPercent}}%"></span></div>
+                  <button type="button" data-action="gci-book-progress-clear" data-tooltip="CoC7.DeleteBookProgress"><i class="fa-solid fa-trash"></i></button>
+                </article>
+              {{else}}
+                <div class="gci-inline-empty">{{localize "ginzzzu-coc7-sheets.Empty.BookProgress"}}</div>
+              {{/each}}
+            </div>
+          </section>
+        </div>
+
+        <section class="gci-panel gci-keeper-features-panel">
+          <header class="gci-panel-heading"><h2>{{localize "ginzzzu-coc7-sheets.Sections.KeeperFeatures"}}</h2></header>
+          <div class="gci-keeper-feature-list">
+            <button class="{{#if gci.keeper.mythosInsanityExperienced}}active{{/if}}" type="button" data-action="gci-toggle-mythos-flag" data-flag="mythosInsanityExperienced">
+              <i class="{{#if gci.keeper.mythosInsanityExperienced}}fa-solid fa-square-check{{else}}fa-regular fa-square{{/if}}"></i>
+              <span>{{localize "CoC7.BackgroundFlagsMythosExperienced"}}</span>
+            </button>
+            <button class="{{#if gci.keeper.mythosHardened}}active{{/if}}" type="button" data-action="gci-toggle-mythos-flag" data-flag="mythosHardened">
+              <i class="{{#if gci.keeper.mythosHardened}}fa-solid fa-square-check{{else}}fa-regular fa-square{{/if}}"></i>
+              <span>{{localize "CoC7.BackgroundFlagsMythosHardened"}}</span>
+            </button>
+            <div class="gci-natural-healing"><span>{{localize "ginzzzu-coc7-sheets.Fields.NaturalHealing"}}</span><strong>{{gci.keeper.naturalHealing}}</strong></div>
+          </div>
+        </section>
+
+        <section class="gci-panel gci-keeper-notes-panel">
+          <header class="gci-panel-heading">
+            <div>
+              <h2>{{localize "ginzzzu-coc7-sheets.Sections.KeeperNotes"}}</h2>
+              <p>{{localize "ginzzzu-coc7-sheets.Hints.KeeperNotes"}}</p>
+            </div>
+          </header>
+          <div class="gci-keeper-editor">
+            <prose-mirror name="system.description.keeper" value="{{gci.keeper.keeperNotes}}" data-document-uuid="{{document.uuid}}" toggled>{{{gci.keeper.enrichedKeeperNotes}}}</prose-mirror>
+          </div>
+        </section>
+      </div>
+    {{/if}}
+
+  </main>
+</div>

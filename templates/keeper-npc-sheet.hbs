@@ -1,0 +1,565 @@
+<div class="ginzzzu-coc7-sheets gcks-sheet{{#if gcks.isCreature}} gcks-sheet--creature{{/if}}{{#if gcks.isLocation}} gcks-sheet--location{{/if}}">
+  <header class="gcks-header">
+    <div class="gcks-portrait-frame">
+      <img class="gcks-portrait" src="{{document.img}}"{{#if gcks.isEditing}} data-action="editImage" data-edit="img"{{/if}} alt="{{document.name}}">
+      {{#if gcks.isEditing}}
+        <input class="gcks-portrait-path" type="hidden" name="img" value="{{document.img}}">
+      {{/if}}
+    </div>
+
+    <div class="gcks-identity">
+      {{#unless gcks.isEditing}}
+        <h1 class="gcks-name">{{document.name}}</h1>
+        <div class="gcks-subtitle">
+          <span>{{gcks.identityRole}}</span>
+          {{#if document.system.infos.age}}
+            <span class="gcks-separator">•</span>
+            <span>
+              {{#if gcks.isLocation}}
+                {{localize "ginzzzu-coc7-sheets.Fields.Access"}}: {{document.system.infos.age}}
+              {{else}}
+                {{localize "ginzzzu-coc7-sheets.Fields.Age"}}: {{document.system.infos.age}}
+              {{/if}}
+            </span>
+          {{/if}}
+          {{#if document.system.infos.organization}}
+            <span class="gcks-separator">•</span>
+            <span>{{document.system.infos.organization}}</span>
+          {{/if}}
+        </div>
+        <div class="gcks-document-context{{#if gcks.documentContext.isTokenInstance}} gcks-document-context--token{{/if}}">
+          <i class="{{gcks.documentContext.icon}}"></i>
+          <span>{{gcks.documentContext.label}}</span>
+          {{#if gcks.documentContext.detail}}<small>{{gcks.documentContext.detail}}</small>{{/if}}
+        </div>
+      {{else}}
+        <label class="gcks-field gcks-field--name">
+          <span>{{localize "ginzzzu-coc7-sheets.Fields.Name"}}</span>
+          <input type="text" name="name" value="{{document.name}}">
+        </label>
+        <div class="gcks-identity-fields">
+          <label class="gcks-field">
+            <span>
+              {{#if gcks.isLocation}}
+                {{localize "ginzzzu-coc7-sheets.Fields.LocationPurpose"}}
+              {{else}}
+                {{localize "ginzzzu-coc7-sheets.Fields.Occupation"}}
+              {{/if}}
+            </span>
+            <input type="text" name="system.infos.occupation" value="{{document.system.infos.occupation}}">
+          </label>
+          <label class="gcks-field gcks-field--age">
+            <span>
+              {{#if gcks.isLocation}}
+                {{localize "ginzzzu-coc7-sheets.Fields.Access"}}
+              {{else}}
+                {{localize "ginzzzu-coc7-sheets.Fields.Age"}}
+              {{/if}}
+            </span>
+            <input type="text" name="system.infos.age" value="{{document.system.infos.age}}">
+          </label>
+          <label class="gcks-field gcks-field--organization">
+            <span>
+              {{#if gcks.isLocation}}
+                {{localize "ginzzzu-coc7-sheets.Fields.LocationService"}}
+              {{else}}
+                {{localize "ginzzzu-coc7-sheets.Fields.Organization"}}
+              {{/if}}
+            </span>
+            <input type="text" name="system.infos.organization" value="{{document.system.infos.organization}}">
+          </label>
+        </div>
+        {{#if gcks.canUseLocationMode}}
+          <label class="gcks-location-mode-toggle" title="{{localize 'ginzzzu-coc7-sheets.Hints.LocationMode'}}">
+            <input type="checkbox" data-action="gcks-toggle-location-mode" {{#if gcks.isLocation}}checked{{/if}}>
+            <span class="gcks-location-mode-switch" aria-hidden="true"></span>
+            <i class="fa-solid fa-map-location-dot"></i>
+            <span>{{localize "ginzzzu-coc7-sheets.Actions.LocationMode"}}</span>
+          </label>
+        {{/if}}
+      {{/unless}}
+    </div>
+
+    {{#if gcks.canEdit}}
+      <button class="gcks-mode-button" type="button" data-action="gcks-toggle-edit">
+        {{#unless gcks.isEditing}}
+          <i class="fa-solid fa-pen-to-square"></i>
+          <span>{{localize "ginzzzu-coc7-sheets.Actions.Edit"}}</span>
+        {{else}}
+          <i class="fa-solid fa-check"></i>
+          <span>{{localize "ginzzzu-coc7-sheets.Actions.FinishEditing"}}</span>
+        {{/unless}}
+      </button>
+    {{/if}}
+  </header>
+
+  {{#if gcks.isLocation}}
+    <main class="gcks-location-main{{#unless gcks.canViewKeeper}} gcks-location-main--public-only{{/unless}}">
+      <section class="gcks-panel gcks-location-column gcks-location-column--description">
+        <div class="gcks-panel-heading gcks-location-heading">
+          <h2>{{localize "ginzzzu-coc7-sheets.Sections.Description"}}</h2>
+          <i class="fa-solid fa-compass"></i>
+        </div>
+        <section class="gcks-rich-text gcks-location-rich-text gcks-scroll-region">
+          {{#if gcks.isEditing}}
+            <prose-mirror name="system.biography.personalDescription.value" value="{{document.system.biography.personalDescription.value}}" data-document-uuid="{{document.uuid}}" toggled>{{{gcks.enrichedPersonalDescription}}}</prose-mirror>
+          {{else}}
+            {{{gcks.enrichedPersonalDescription}}}
+          {{/if}}
+        </section>
+      </section>
+
+      {{#if gcks.canViewKeeper}}
+        <section class="gcks-panel gcks-location-column gcks-location-column--keeper">
+          <div class="gcks-panel-heading gcks-panel-heading--keeper gcks-location-heading">
+            <h2>{{localize "ginzzzu-coc7-sheets.Sections.KeeperNotes"}}</h2>
+            <i class="game-icon game-icon-tentacles-skull"></i>
+          </div>
+          <section class="gcks-rich-text gcks-rich-text--keeper gcks-location-rich-text gcks-scroll-region">
+            {{#if gcks.isEditing}}
+              <prose-mirror name="system.description.keeper" value="{{document.system.description.keeper}}" data-document-uuid="{{document.uuid}}" toggled>{{{gcks.enrichedKeeperDescription}}}</prose-mirror>
+            {{else}}
+              {{{gcks.enrichedKeeperDescription}}}
+            {{/if}}
+          </section>
+        </section>
+      {{/if}}
+    </main>
+  {{else}}
+  <section class="gcks-vitals gcks-vitals--{{gcks.vitalCount}}" aria-label="{{localize 'ginzzzu-coc7-sheets.Sections.Vitals'}}">
+    {{#if gcks.vitals.hp}}
+    <div class="gcks-vital attribute" data-attrib="hp">
+      <span class="gcks-vital-label">{{localize "CoC7.HP"}}</span>
+      {{#if gcks.isEditing}}
+        <div class="gcks-vital-values">
+          <input class="attribute-value" type="text" name="system.attribs.hp.value" value="{{attribs.hp.value}}" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Current'}}">
+          <span>/</span>
+          <input type="text" name="system.attribs.hp.max" value="{{attribs.hp.max}}" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Maximum'}}" {{#if (and document.system.attribs.hp.auto (not gcks.canViewKeeper))}}readonly{{/if}}>
+        </div>
+      {{else}}
+        <div class="gcks-vital-play">
+          <div class="gcks-vital-readout"><strong>{{attribs.hp.value}}</strong><span>/</span><span>{{attribs.hp.max}}</span></div>
+          {{#if gcks.canEdit}}
+            <div class="gcks-vital-stepper">
+              <button type="button" data-action="gcks-adjust-vital" data-attrib="hp" data-delta="1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalIncrease'}}"><i class="fa-solid fa-caret-up"></i></button>
+              <button type="button" data-action="gcks-adjust-vital" data-attrib="hp" data-delta="-1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalDecrease'}}"><i class="fa-solid fa-caret-down"></i></button>
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if gcks.vitals.mp}}
+    <div class="gcks-vital attribute" data-attrib="mp">
+      <span class="gcks-vital-label">{{localize "CoC7.MP"}}</span>
+      {{#if gcks.isEditing}}
+        <div class="gcks-vital-values">
+          <input class="attribute-value" type="text" name="system.attribs.mp.value" value="{{attribs.mp.value}}" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Current'}}">
+          <span>/</span>
+          <input type="text" name="system.attribs.mp.max" value="{{attribs.mp.max}}" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Maximum'}}" {{#if (and document.system.attribs.mp.auto (not gcks.canViewKeeper))}}readonly{{/if}}>
+        </div>
+      {{else}}
+        <div class="gcks-vital-play">
+          <div class="gcks-vital-readout"><strong>{{attribs.mp.value}}</strong><span>/</span><span>{{attribs.mp.max}}</span></div>
+          {{#if gcks.canEdit}}
+            <div class="gcks-vital-stepper">
+              <button type="button" data-action="gcks-adjust-vital" data-attrib="mp" data-delta="1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalIncrease'}}"><i class="fa-solid fa-caret-up"></i></button>
+              <button type="button" data-action="gcks-adjust-vital" data-attrib="mp" data-delta="-1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalDecrease'}}"><i class="fa-solid fa-caret-down"></i></button>
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if gcks.vitals.san}}
+    <div class="gcks-vital attribute" data-attrib="san">
+      <button class="gcks-vital-label attribute-name rollable" type="button" draggable="true" data-tooltip-key="san">{{localize "CoC7.SAN"}}</button>
+      {{#if gcks.isEditing}}
+        <div class="gcks-vital-values">
+          <input class="attribute-value" type="text" name="system.attribs.san.value" value="{{attribs.san.value}}" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Current'}}">
+          <span>/</span>
+          <input type="text" name="system.attribs.san.max" value="{{attribs.san.max}}" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Maximum'}}" {{#if (and document.system.attribs.san.auto (not gcks.canViewKeeper))}}readonly{{/if}}>
+        </div>
+      {{else}}
+        <div class="gcks-vital-play">
+          <div class="gcks-vital-readout"><strong>{{attribs.san.value}}</strong><span>/</span><span>{{attribs.san.max}}</span></div>
+          {{#if gcks.canEdit}}
+            <div class="gcks-vital-stepper">
+              <button type="button" data-action="gcks-adjust-vital" data-attrib="san" data-delta="1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalIncrease'}}"><i class="fa-solid fa-caret-up"></i></button>
+              <button type="button" data-action="gcks-adjust-vital" data-attrib="san" data-delta="-1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalDecrease'}}"><i class="fa-solid fa-caret-down"></i></button>
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if gcks.vitals.lck}}
+    <div class="gcks-vital attribute" data-attrib="lck">
+      <button class="gcks-vital-label attribute-name rollable" type="button" draggable="true" data-tooltip-key="lck">{{localize "CoC7.Luck"}}</button>
+      {{#if gcks.isEditing}}
+        <div class="gcks-vital-values gcks-vital-values--single">
+          <input class="attribute-value" type="text" name="system.attribs.lck.value" value="{{attribs.lck.value}}">
+        </div>
+      {{else}}
+        <div class="gcks-vital-play">
+          <div class="gcks-vital-readout gcks-vital-readout--single"><strong>{{attribs.lck.value}}</strong></div>
+          {{#if gcks.canEdit}}
+            <div class="gcks-vital-stepper">
+              <button type="button" data-action="gcks-adjust-vital" data-attrib="lck" data-delta="1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalIncrease'}}"><i class="fa-solid fa-caret-up"></i></button>
+              <button type="button" data-action="gcks-adjust-vital" data-attrib="lck" data-delta="-1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.VitalDecrease'}}"><i class="fa-solid fa-caret-down"></i></button>
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+    {{/if}}
+  </section>
+
+  <main class="gcks-main gcks-scroll-region">
+    <div class="gcks-column gcks-column--left">
+      <section class="gcks-panel">
+        <div class="gcks-panel-heading">
+          <h2>{{localize "ginzzzu-coc7-sheets.Sections.Characteristics"}}</h2>
+          {{#unless gcks.isEditing}}
+            <span>{{localize "ginzzzu-coc7-sheets.Hints.ClickToRoll"}}</span>
+          {{/unless}}
+        </div>
+
+        <div class="gcks-characteristics">
+          {{#each characteristics as |characteristic key|}}
+            <div class="gcks-characteristic attribute" data-characteristic="{{key}}">
+              {{#unless ../gcks.isEditing}}
+                <button class="characteristic-name rollable" type="button" draggable="true" data-tooltip-key="{{key}}">
+                  <span class="gcks-characteristic-label">{{localize characteristic.short}}</span>
+                  <strong>{{characteristic.value}}</strong>
+                  <span class="gcks-thresholds">
+                    <span>{{characteristic.hard}}</span>
+                    <span>{{characteristic.extreme}}</span>
+                  </span>
+                </button>
+              {{else}}
+                <label class="gcks-characteristic-edit">
+                  <span>{{localize characteristic.short}}</span>
+                  {{#if ../document.system.flags.displayFormula}}
+                    <input type="text" name="system.characteristics.{{key}}.formula" value="{{characteristic.formula}}">
+                  {{else}}
+                    <input type="text" name="system.characteristics.{{key}}.value" value="{{characteristic.sourceValue}}">
+                  {{/if}}
+                </label>
+              {{/unless}}
+            </div>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="gcks-panel">
+        <div class="gcks-panel-heading">
+          <h2>{{localize "ginzzzu-coc7-sheets.Sections.Derived"}}</h2>
+        </div>
+        <div class="gcks-derived">
+          <label class="gcks-derived-stat attribute" data-attrib="mov">
+            <span>{{localize "CoC7.Mov"}}</span>
+            <input type="text" name="system.attribs.mov.value" value="{{attribs.mov.value}}" {{#if (or (not gcks.isEditing) document.system.attribs.mov.auto)}}readonly{{/if}}>
+          </label>
+          <label class="gcks-derived-stat attribute" data-attrib="build">
+            <span>{{localize "CoC7.Build"}}</span>
+            <input type="text" name="system.attribs.build.value" value="{{attribs.build.value}}" {{#if (or (not gcks.isEditing) document.system.attribs.build.auto)}}readonly{{/if}}>
+          </label>
+          <div class="gcks-derived-stat attribute" data-attrib="db">
+            {{#unless gcks.isEditing}}
+              <button class="gcks-derived-roll attribute-name rollable" type="button" data-tooltip="CoC7.ToolTipDB" data-tooltip-class="coc7-wider-tooltip">{{localize "CoC7.DB"}}</button>
+            {{else}}
+              <span>{{localize "CoC7.DB"}}</span>
+            {{/unless}}
+            <input type="text" name="system.attribs.db.value" value="{{attribs.db.value}}" {{#if (or (not gcks.isEditing) document.system.attribs.db.auto)}}readonly{{/if}}>
+          </div>
+          <label class="gcks-derived-stat attribute" data-attrib="armor">
+            <span>{{localize "CoC7.Armor"}}</span>
+            <input type="text" name="system.attribs.armor.value" value="{{attribs.armor.value}}" {{#unless gcks.isEditing}}readonly{{/unless}}>
+          </label>
+          {{#if gcks.hasSanLoss}}
+            <div class="gcks-derived-stat gcks-derived-stat--san-loss">
+              <span>{{localize "ginzzzu-coc7-sheets.Fields.SanLoss"}}</span>
+              <strong>{{gcks.sanLossPassed}} / {{gcks.sanLossFailed}}</strong>
+            </div>
+          {{/if}}
+        </div>
+      </section>
+
+      <section class="gcks-panel gcks-conditions-panel">
+        <div class="gcks-panel-heading">
+          <h2>{{localize "ginzzzu-coc7-sheets.Sections.Conditions"}}</h2>
+          <span>{{localize "ginzzzu-coc7-sheets.Hints.Conditions"}}</span>
+        </div>
+        <div class="gcks-condition-grid">
+          {{#each gcks.conditions as |condition|}}
+            <button
+              class="gcks-condition{{#if condition.active}} active{{/if}}"
+              type="button"
+              data-action="gcks-toggle-condition"
+              data-condition="{{condition.key}}"
+              data-tooltip="{{condition.label}}"
+              {{#unless ../gcks.canToggleConditions}}disabled{{/unless}}
+            >
+              <i class="{{condition.icon}}"></i>
+              <span>{{condition.label}}</span>
+            </button>
+          {{/each}}
+        </div>
+      </section>
+
+      <aside class="gcks-roll-help">
+        <i class="fa-solid fa-dice-d20"></i>
+        <span>
+          {{#if gcks.isCreature}}
+            {{localize "ginzzzu-coc7-sheets.Hints.RollHelpCreature"}}
+          {{else}}
+            {{localize "ginzzzu-coc7-sheets.Hints.RollHelp"}}
+          {{/if}}
+        </span>
+      </aside>
+    </div>
+
+    <div class="gcks-column gcks-column--right">
+      <section class="gcks-panel gcks-workspace">
+        <nav class="gcks-tabs" aria-label="{{localize 'ginzzzu-coc7-sheets.Sections.Workspace'}}">
+          <button class="gcks-tab{{#if gcks.tabs.skills.active}} active{{/if}}" type="button" data-action="gcks-select-tab" data-tab="skills">
+            <i class="fa-solid fa-list-check"></i><span>{{localize "ginzzzu-coc7-sheets.Tabs.Skills"}}</span>
+          </button>
+          <button class="gcks-tab{{#if gcks.tabs.combat.active}} active{{/if}}" type="button" data-action="gcks-select-tab" data-tab="combat">
+            <i class="fa-solid fa-swords"></i><span>{{localize "ginzzzu-coc7-sheets.Tabs.Combat"}}</span>
+          </button>
+          <button class="gcks-tab{{#if gcks.tabs.inventory.active}} active{{/if}}" type="button" data-action="gcks-select-tab" data-tab="inventory">
+            <i class="fa-solid fa-briefcase"></i><span>{{localize "ginzzzu-coc7-sheets.Tabs.Inventory"}}</span>
+          </button>
+          <button class="gcks-tab{{#if gcks.tabs.description.active}} active{{/if}}" type="button" data-action="gcks-select-tab" data-tab="description">
+            <i class="fa-solid fa-address-card"></i><span>{{localize "ginzzzu-coc7-sheets.Tabs.Description"}}</span>
+          </button>
+          {{#if gcks.tabs.keeper.visible}}
+            <button class="gcks-tab{{#if gcks.tabs.keeper.active}} active{{/if}}" type="button" data-action="gcks-select-tab" data-tab="keeper">
+              <i class="game-icon game-icon-tentacles-skull"></i><span>{{localize "ginzzzu-coc7-sheets.Tabs.Keeper"}}</span>
+            </button>
+          {{/if}}
+        </nav>
+
+        <div class="gcks-tab-content">
+          {{#if gcks.tabs.skills.active}}
+            <div class="gcks-panel-heading gcks-panel-heading--inside">
+              <h2>{{localize "ginzzzu-coc7-sheets.Sections.Skills"}}</h2>
+              {{#if gcks.isEditing}}
+                <button class="item-control gcks-icon-button" type="button" data-action="item-add" data-type="skill" data-tooltip="CoC7.AddSkill">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              {{/if}}
+            </div>
+
+            <div class="gcks-skill-head" aria-hidden="true">
+              <span>{{localize "ginzzzu-coc7-sheets.Fields.Skill"}}</span>
+              <span>{{localize "ginzzzu-coc7-sheets.Fields.Regular"}}</span>
+              <span>{{localize "ginzzzu-coc7-sheets.Fields.Hard"}}</span>
+              <span>{{localize "ginzzzu-coc7-sheets.Fields.Extreme"}}</span>
+            </div>
+
+            <div class="gcks-skill-list">
+              {{#each gcks.skills as |skill|}}
+                <div class="item skill gcks-skill-row{{#if skill.isCombat}} gcks-skill-row--combat{{/if}}" data-item-uuid="{{skill.uuid}}">
+                  {{#unless ../gcks.isEditing}}
+                    <button class="skill-name rollable{{#if skill.isCombat}} combat{{/if}}" type="button" data-name-tooltip="{{skill.name}}" data-value-tooltip="{{skill.value}}">
+                      {{#if skill.isSpecialized}}
+                        <span class="gcks-specialization">{{skill.specialization}}</span>
+                      {{/if}}
+                      <span>{{skill.skillName}}</span>
+                    </button>
+                    <strong>{{skill.value}}</strong>
+                    <span>{{skill.hard}}</span>
+                    <span>{{skill.extreme}}</span>
+                  {{else}}
+                    <input class="skill-name" type="text" value="{{skill.skillName}}" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Skill'}}">
+                    <input class="npc-skill-score" type="text" value="{{skill.valueUnmodified}}" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Regular'}}">
+                    <span>{{skill.hard}}</span>
+                    <span>{{skill.extreme}}</span>
+                    <div class="gcks-skill-controls">
+                      <button class="item-control gcks-icon-button" type="button" data-action="item-edit" data-tooltip="CoC7.EditSkill">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="item-control gcks-icon-button gcks-icon-button--danger" type="button" data-action="item-delete" data-tooltip="CoC7.DeleteSkill">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
+                  {{/unless}}
+                </div>
+              {{else}}
+                <p class="gcks-empty">{{localize "ginzzzu-coc7-sheets.Empty.Skills"}}</p>
+              {{/each}}
+            </div>
+          {{/if}}
+
+          {{#if gcks.tabs.combat.active}}
+            <div class="gcks-panel-heading gcks-panel-heading--inside">
+              <h2>{{localize "ginzzzu-coc7-sheets.Sections.Combat"}}</h2>
+              <div class="gcks-heading-actions">
+                <label class="gcks-attacks-per-round">
+                  <span>{{localize "ginzzzu-coc7-sheets.Fields.AttacksPerRound"}}</span>
+                  <input type="text" name="system.special.attacksPerRound" value="{{gcks.attacksPerRound}}" {{#unless gcks.isEditing}}readonly{{/unless}}>
+                </label>
+                {{#if gcks.isEditing}}
+                  <button class="item-control gcks-icon-button" type="button" data-action="item-add" data-type="weapon" data-tooltip="CoC7.AddWeapon">
+                    <i class="fa-solid fa-plus"></i>
+                  </button>
+                {{/if}}
+              </div>
+            </div>
+
+            <div class="gcks-weapon-list">
+              {{#each gcks.weapons as |weapon|}}
+                <article class="item gcks-weapon-row" data-item-uuid="{{weapon.uuid}}">
+                  <img class="gcks-item-image" src="{{weapon.img}}" alt="">
+                  <div class="gcks-weapon-main">
+                    <div class="gcks-weapon-title-row">
+                      <h3 class="gcks-weapon-title">{{weapon.name}}</h3>
+                      {{#if weapon.propertyLabels.length}}
+                        <div class="gcks-tags">
+                          {{#each weapon.propertyLabels as |label|}}<span>{{label}}</span>{{/each}}
+                        </div>
+                      {{/if}}
+                    </div>
+
+                    <div class="gcks-weapon-actions">
+                      <button class="gcks-combat-action gcks-combat-action--attack" type="button" data-action="gcks-weapon-roll">
+                        <i class="fa-solid fa-crosshairs"></i>
+                        <span>{{localize "ginzzzu-coc7-sheets.Actions.Attack"}}</span>
+                      </button>
+
+                      {{#if weapon.mainSkill}}
+                        <button class="gcks-combat-action" type="button" data-action="gcks-weapon-skill-roll" data-skill-uuid="{{weapon.mainSkill.uuid}}" data-tooltip="{{weapon.mainSkill.name}}">
+                          <i class="fa-solid fa-dice-d20"></i>
+                          <span>{{localize "ginzzzu-coc7-sheets.Actions.CheckSkill"}}</span>
+                          <strong>{{weapon.mainSkill.value}}%</strong>
+                        </button>
+                      {{else}}
+                        <span class="gcks-combat-action gcks-combat-action--disabled">{{localize "ginzzzu-coc7-sheets.Empty.WeaponSkill"}}</span>
+                      {{/if}}
+
+                      {{#if weapon.canRollDamage}}
+                        <button class="gcks-combat-action" type="button" data-action="gcks-weapon-damage-roll" data-damage-range="{{weapon.primaryDamageRange}}" data-tooltip="{{weapon.damageTooltip}}">
+                          <i class="fa-solid fa-burst"></i>
+                          <span>{{localize "ginzzzu-coc7-sheets.Actions.RollDamage"}}</span>
+                          <strong>{{weapon.primaryDamage}}</strong>
+                        </button>
+                      {{/if}}
+                    </div>
+
+                    <div class="gcks-weapon-details">
+                      {{#if weapon.mainSkill}}<span>{{weapon.mainSkill.name}}</span>{{/if}}
+                      {{#if weapon.alternativeSkill}}
+                        <button class="gcks-inline-roll" type="button" data-action="gcks-weapon-skill-roll" data-skill-uuid="{{weapon.alternativeSkill.uuid}}">
+                          {{weapon.alternativeSkill.name}} <strong>{{weapon.alternativeSkill.value}}%</strong>
+                        </button>
+                      {{/if}}
+                    </div>
+
+                    {{#if weapon.hasAmmoTracker}}
+                      <div class="gcks-ammo-editor">
+                        <span class="gcks-ammo-editor__label">{{localize "ginzzzu-coc7-sheets.Fields.Ammo"}}</span>
+                        {{#if ../gcks.canEdit}}
+                          <input type="number" min="0" step="1" value="{{weapon.ammo}}" data-action="gcks-weapon-ammo-change" data-ammo-field="ammo" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.AmmoCurrent'}}">
+                        {{else}}
+                          <strong>{{weapon.ammo}}</strong>
+                        {{/if}}
+                        <span class="gcks-ammo-editor__separator">/</span>
+                        {{#if ../gcks.isEditing}}
+                          <input type="number" min="0" step="1" value="{{weapon.bullets}}" data-action="gcks-weapon-ammo-change" data-ammo-field="bullets" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.AmmoCapacity'}}">
+                        {{else}}
+                          <strong>{{weapon.bullets}}</strong>
+                        {{/if}}
+                      </div>
+                    {{/if}}
+                  </div>
+                  {{#if ../gcks.isEditing}}
+                    <div class="gcks-row-controls">
+                      <button class="item-control gcks-icon-button" type="button" data-action="item-edit" data-tooltip="CoC7.EditWeapon"><i class="fa-solid fa-pen"></i></button>
+                      <button class="item-control gcks-icon-button gcks-icon-button--danger" type="button" data-action="item-delete" data-tooltip="CoC7.DeleteWeapon"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  {{/if}}
+                </article>
+              {{else}}
+                <p class="gcks-empty">{{localize "ginzzzu-coc7-sheets.Empty.Weapons"}}</p>
+              {{/each}}
+            </div>
+            <aside class="gcks-context-hint">{{localize "ginzzzu-coc7-sheets.Hints.WeaponRoll"}}</aside>
+          {{/if}}
+
+          {{#if gcks.tabs.inventory.active}}
+            <div class="gcks-panel-heading gcks-panel-heading--inside">
+              <h2>{{localize "ginzzzu-coc7-sheets.Sections.Inventory"}}</h2>
+              {{#if gcks.isEditing}}
+                <button class="item-control gcks-icon-button" type="button" data-action="item-add" data-type="item" data-tooltip="CoC7.AddItem">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              {{/if}}
+            </div>
+            <div class="gcks-inventory-list">
+              {{#each gcks.inventory as |item|}}
+                <article class="item gcks-inventory-row" data-item-uuid="{{item.uuid}}">
+                  <img class="gcks-item-image" src="{{item.img}}" alt="">
+                  <button class="gcks-inventory-name" type="button" data-action="item-edit">
+                    {{#if item.showQuantity}}<span class="gcks-quantity">{{item.quantity}}×</span>{{/if}}
+                    <span>{{item.name}}</span>
+                  </button>
+                  <span class="gcks-type-label">{{item.typeLabel}}</span>
+                  {{#if ../gcks.isEditing}}
+                    <div class="gcks-row-controls">
+                      <button class="item-control gcks-icon-button" type="button" data-action="item-edit"><i class="fa-solid fa-pen"></i></button>
+                      <button class="item-control gcks-icon-button gcks-icon-button--danger" type="button" data-action="item-delete"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                  {{/if}}
+                </article>
+              {{else}}
+                <p class="gcks-empty">{{localize "ginzzzu-coc7-sheets.Empty.Inventory"}}</p>
+              {{/each}}
+            </div>
+          {{/if}}
+
+          {{#if gcks.tabs.description.active}}
+            <div class="gcks-panel-heading gcks-panel-heading--inside">
+              <h2>{{localize "ginzzzu-coc7-sheets.Sections.Description"}}</h2>
+            </div>
+            <div class="gcks-profile-facts">
+              {{#if document.system.infos.type}}
+                <div><span>{{localize "ginzzzu-coc7-sheets.Fields.Type"}}</span><strong>{{document.system.infos.type}}</strong></div>
+              {{/if}}
+              {{#if document.system.infos.organization}}
+                <div><span>{{localize "ginzzzu-coc7-sheets.Fields.Organization"}}</span><strong>{{document.system.infos.organization}}</strong></div>
+              {{/if}}
+            </div>
+            <section class="gcks-rich-text">
+              {{#if gcks.isEditing}}
+                <prose-mirror name="system.biography.personalDescription.value" value="{{document.system.biography.personalDescription.value}}" data-document-uuid="{{document.uuid}}" toggled>{{{gcks.enrichedPersonalDescription}}}</prose-mirror>
+              {{else}}
+                {{{gcks.enrichedPersonalDescription}}}
+              {{/if}}
+            </section>
+          {{/if}}
+
+          {{#if gcks.tabs.keeper.active}}
+            <div class="gcks-panel-heading gcks-panel-heading--inside gcks-panel-heading--keeper">
+              <h2>{{localize "ginzzzu-coc7-sheets.Sections.KeeperNotes"}}</h2>
+              <i class="game-icon game-icon-tentacles-skull"></i>
+            </div>
+            <section class="gcks-rich-text gcks-rich-text--keeper">
+              {{#if gcks.isEditing}}
+                <prose-mirror name="system.description.keeper" value="{{document.system.description.keeper}}" data-document-uuid="{{document.uuid}}" toggled>{{{gcks.enrichedKeeperDescription}}}</prose-mirror>
+              {{else}}
+                {{{gcks.enrichedKeeperDescription}}}
+              {{/if}}
+            </section>
+          {{/if}}
+        </div>
+      </section>
+    </div>
+  </main>
+  {{/if}}
+</div>
