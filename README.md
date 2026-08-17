@@ -1,5 +1,7 @@
 # Ginzzzu's CoC7 Sheets
 
+**English** | [Русский](README_RU.md)
+
 ![GitHub Release](https://img.shields.io/github/v/release/Ginzzzu/ginzzzu-coc7-sheets?label=Version)
 ![Total Downloads](https://img.shields.io/github/downloads/Ginzzzu/ginzzzu-coc7-sheets/ginzzzu-coc7-sheets.zip?label=Total%20Downloads)
 ![Latest Release Downloads](https://img.shields.io/github/downloads/Ginzzzu/ginzzzu-coc7-sheets/latest/ginzzzu-coc7-sheets.zip?label=Latest%20Release)
@@ -11,7 +13,7 @@ Ginzzzu's CoC7 Sheets provides dedicated opt-in sheets for investigators, Keeper
 <p align="center">
   <img
     src=".github/assets/ginzzzu-coc7-sheets-preview.jpg"
-    alt="Ginzzzu’s Stickers"
+    alt="Ginzzzu's CoC7 Sheets"
     width="900"
   >
 </p>
