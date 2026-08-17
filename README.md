@@ -2,9 +2,8 @@
 
 **English** | [Русский](README_RU.md)
 
-![GitHub Release](https://img.shields.io/github/v/release/Ginzzzu/ginzzzu-coc7-sheets?label=Version)
-![Total Downloads](https://img.shields.io/github/downloads/Ginzzzu/ginzzzu-coc7-sheets/ginzzzu-coc7-sheets.zip?label=Total%20Downloads)
-![Latest Release Downloads](https://img.shields.io/github/downloads/Ginzzzu/ginzzzu-coc7-sheets/latest/ginzzzu-coc7-sheets.zip?label=Latest%20Release)
+[![Downloads](https://img.shields.io/github/downloads/Ginzzzu/ginzzzu-coc7-sheets/total)](https://github.com/Ginzzzu/ginzzzu-coc7-sheets/releases)
+![Downloads Latest](https://img.shields.io/github/downloads/Ginzzzu/ginzzzu-coc7-sheets/latest/total)
 
 Modern alternative character sheets for **Call of Cthulhu 7th Edition** on **Foundry VTT v14**.
 
