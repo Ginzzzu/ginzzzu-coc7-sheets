@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.11.13
+## 1.0
 
 - Keepers can now manually change automatic HP, MP, and Sanity maximums in investigator and creature edit modes.
 - A manual maximum change disables CoC7's automatic calculation for that specific attribute in the same Actor update, preventing the system from immediately restoring the calculated value.
