@@ -3,8 +3,8 @@
 [English](README.md) | **Русский**
 
 ![GitHub Release](https://img.shields.io/github/v/release/Ginzzzu/ginzzzu-coc7-sheets?label=Version)
-![Total Downloads](https://img.shields.io/github/downloads/Ginzzzu/ginzzzu-coc7-sheets/ginzzzu-coc7-sheets.zip?label=Total%20Downloads)
-![Latest Release Downloads](https://img.shields.io/github/downloads/Ginzzzu/ginzzzu-coc7-sheets/latest/ginzzzu-coc7-sheets.zip?label=Latest%20Release)
+[![Downloads](https://img.shields.io/github/downloads/Ginzzzu/ginzzzu-coc7-sheets/total)](https://github.com/Ginzzzu/ginzzzu-coc7-sheets/releases)
+![Downloads Latest](https://img.shields.io/github/downloads/Ginzzzu/ginzzzu-coc7-sheets/latest/total)
 
 Современные альтернативные листы персонажей для **Call of Cthulhu 7th Edition** в **Foundry VTT v14**.
 
