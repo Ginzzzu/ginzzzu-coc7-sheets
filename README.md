@@ -8,6 +8,14 @@ Modern alternative character sheets for **Call of Cthulhu 7th Edition** on **Fou
 
 Ginzzzu's CoC7 Sheets provides dedicated opt-in sheets for investigators, Keeper NPCs, creatures, and locations while keeping gameplay data in the native CoC7 Actor and Item fields.
 
+<p align="center">
+  <img
+    src=".github/assets/ginzzzu-coc7-sheets-preview.jpg"
+    alt="Ginzzzu’s Stickers"
+    width="900"
+  >
+</p>
+
 The module does **not** replace the standard CoC7 sheets automatically. Each alternative sheet can be selected through Foundry's Actor sheet configuration.
 
 ---
