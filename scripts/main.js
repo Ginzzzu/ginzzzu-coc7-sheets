@@ -1,11 +1,19 @@
 import { MODULE_ID } from "./constants.js";
-import { registerInvestigatorSheet, registerKeeperNpcSheet } from "./register-sheet.js";
+import { registerInvestigatorSheet, registerItemSheet, registerKeeperNpcSheet } from "./register-sheet.js";
 import { registerAmmoConsumptionHooks } from "./services/ammo-consumption.js";
+import { registerSkillDevelopmentHooks } from "./services/skill-development.js";
+import {
+  formatUsesPerRound,
+  parseUsesPerRound,
+  patchCoC7WeaponSystem,
+  repairAllWeapons
+} from "./services/weapon-compatibility.js";
 
 const runtime = {
   registrationErrors: [],
   keeperNpcSheetClass: null,
-  investigatorSheetClass: null
+  investigatorSheetClass: null,
+  itemSheetClass: null
 };
 
 function publishApi() {
@@ -16,10 +24,16 @@ function publishApi() {
     getRegistrationErrors: () => [...runtime.registrationErrors],
     getKeeperNpcSheetClass: () => runtime.keeperNpcSheetClass,
     getInvestigatorSheetClass: () => runtime.investigatorSheetClass,
+    getItemSheetClass: () => runtime.itemSheetClass,
     getSheetClasses: () => Object.freeze({
       keeperNpc: runtime.keeperNpcSheetClass,
-      investigator: runtime.investigatorSheetClass
-    })
+      investigator: runtime.investigatorSheetClass,
+      item: runtime.itemSheetClass
+    }),
+    repairAllWeapons: (options) => repairAllWeapons(options),
+    formatUsesPerRound: (weapon) => formatUsesPerRound(weapon),
+    parseUsesPerRound: (normal, max) => parseUsesPerRound(normal, max),
+    patchWeaponSystem: () => patchCoC7WeaponSystem()
   });
 }
 
@@ -46,13 +60,38 @@ Hooks.once("init", () => {
   }
 
   try {
+    runtime.itemSheetClass = registerItemSheet();
+    console.info(`${MODULE_ID} | Alternative CoC7 Item sheet registered.`);
+  } catch (error) {
+    recordRegistrationFailure("Item sheet", error);
+  }
+
+  try {
     registerAmmoConsumptionHooks();
   } catch (error) {
     recordRegistrationFailure("ammunition hooks", error);
   }
+
+  try {
+    registerSkillDevelopmentHooks();
+  } catch (error) {
+    recordRegistrationFailure("skill development hooks", error);
+  }
+
+  try {
+    patchCoC7WeaponSystem();
+  } catch (error) {
+    recordRegistrationFailure("weapon compatibility patch", error);
+  }
 });
 
 Hooks.once("ready", () => {
+  try {
+    patchCoC7WeaponSystem();
+  } catch (error) {
+    console.error(`${MODULE_ID} | Failed to apply weapon compatibility patch on ready.`, error);
+  }
+
   try {
     if (!runtime.registrationErrors.length || !game.user.isGM) return;
     ui.notifications.error(`${MODULE_ID}.Notifications.RegistrationFailed`, {

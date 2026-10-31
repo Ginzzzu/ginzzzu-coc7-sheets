@@ -22,6 +22,21 @@ The module does **not** replace the standard CoC7 sheets automatically. Each alt
 
 ---
 
+## Actor Access
+
+The sheets respect Foundry's effective Actor permissions:
+
+| Permission | Player access |
+| --- | --- |
+| None | Actor is hidden and its sheet cannot be opened. |
+| Limited | Only the portrait is shown. |
+| Observer | The full sheet can be viewed without editing; tabs, skill filters, and skill search remain available. |
+| Owner | Full access to the sheet and editing. |
+
+Version 1.1.1 restores the portrait-only Limited view and read-only navigation for Observers. Actor ownership settings are unchanged.
+
+---
+
 ## Download & Installation
 
 ### Install through Foundry VTT
@@ -181,6 +196,22 @@ Location mode provides a focused two-column layout:
 - **Keeper Notes** for GM-only information.
 
 The mode is derived from native Actor data and does not require a separate module flag.
+
+---
+
+## Silver-Metallic Item Sheet
+
+The module includes an alternative sheet for **Item** documents (type `item`), designed with a dark silver-metallic noir aesthetic.
+
+Features:
+
+- **Header & Artwork**: Framed metallic portrait, quick full-size image viewer (`ImagePopout`), and seamless «View / Edit» mode toggling;
+- **Quick Stat Controls**: Adjust quantity with `+` / `-` buttons directly in view mode (`Shift`-click for increments of 5), displays weight and active world era price;
+- **«Description» Tab**: Rich-text description supporting ProseMirror and inline artwork;
+- **«Keeper Secrets» Tab**: Confidential notes, curse triggers, and lore visible exclusively to the GM;
+- **«Era Prices» Tab**: Toggle availability and enter prices for all CoC7 historical eras (1920s, Modern, Gaslight, Pulp, Dark Ages, etc.);
+- **«Effects» Tab**: View, enable/disable, and manage Active Effects;
+- **«Share with Players» Button**: Instantly post a styled clue/item card with artwork and description into the chat.
 
 ---
 

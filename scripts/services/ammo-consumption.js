@@ -111,6 +111,10 @@ export function trackRangedWeaponUse(weapon) {
   });
 }
 
+export function cancelRangedWeaponUse(weaponUuid) {
+  if (weaponUuid) pendingByWeapon.delete(weaponUuid);
+}
+
 export function registerAmmoConsumptionHooks() {
   Hooks.on("createChatMessage", async (message) => {
     try {

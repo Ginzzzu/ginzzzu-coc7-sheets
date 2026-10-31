@@ -967,26 +967,26 @@
 
 .ginzzzu-coc7-sheets .gci-skill-edit-row {
   display: grid;
-  grid-template-columns: 34px minmax(190px, 1fr) repeat(4, 68px) 64px 40px;
-  min-width: 650px;
+  grid-template-columns: 34px minmax(190px, 1fr) repeat(4, 68px) 64px 60px;
+  min-width: 670px;
   min-height: 44px;
   align-items: stretch;
   border-bottom: 1px solid rgba(114, 104, 74, 0.24);
 }
 
 .ginzzzu-coc7-sheets .gci-skill-list--archetype .gci-skill-edit-row {
-  grid-template-columns: 34px minmax(190px, 1fr) repeat(5, 68px) 64px 40px;
-  min-width: 720px;
+  grid-template-columns: 34px minmax(190px, 1fr) repeat(5, 68px) 64px 60px;
+  min-width: 740px;
 }
 
 .ginzzzu-coc7-sheets .gci-skill-list--experience-package .gci-skill-edit-row {
-  grid-template-columns: 34px minmax(190px, 1fr) repeat(5, 68px) 64px 40px;
-  min-width: 720px;
+  grid-template-columns: 34px minmax(190px, 1fr) repeat(5, 68px) 64px 60px;
+  min-width: 740px;
 }
 
 .ginzzzu-coc7-sheets .gci-skill-list--archetype.gci-skill-list--experience-package .gci-skill-edit-row {
-  grid-template-columns: 34px minmax(190px, 1fr) repeat(6, 68px) 64px 40px;
-  min-width: 790px;
+  grid-template-columns: 34px minmax(190px, 1fr) repeat(6, 68px) 64px 60px;
+  min-width: 810px;
 }
 
 .ginzzzu-coc7-sheets .gci-skill-edit-row:not(.gci-skill-edit-row--header):hover {
@@ -1010,8 +1010,18 @@
   white-space: nowrap;
 }
 
+.ginzzzu-coc7-sheets .gci-skill-edit-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 4px;
+  border-left: 1px solid rgba(114, 104, 74, 0.17);
+}
+
 .ginzzzu-coc7-sheets .gci-occupation-toggle,
-.ginzzzu-coc7-sheets .gci-skill-edit-button {
+.ginzzzu-coc7-sheets .gci-skill-edit-button,
+.ginzzzu-coc7-sheets .gci-skill-delete-button {
   align-self: center;
   justify-self: center;
   width: 25px;
@@ -1036,6 +1046,16 @@
   border-color: rgba(178, 154, 97, 0.48);
   color: var(--gcks-paper);
   background: rgba(178, 154, 97, 0.08);
+}
+
+.ginzzzu-coc7-sheets .gci-skill-delete-button {
+  color: rgba(198, 111, 98, 0.85);
+}
+
+.ginzzzu-coc7-sheets .gci-skill-delete-button:hover {
+  border-color: rgba(190, 78, 68, 0.82);
+  color: #ffd8d2;
+  background: rgba(116, 36, 31, 0.34);
 }
 
 .ginzzzu-coc7-sheets .gci-adjustment-readonly,

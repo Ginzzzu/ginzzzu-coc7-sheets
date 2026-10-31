@@ -1,4 +1,5 @@
-import { INVESTIGATOR_TEMPLATE_PATH, MODULE_ID } from "../constants.js";
+import { isLimitedActorView, limitedActorContext, enableReadOnlyNavigation } from "../services/actor-sheet-access.js";
+import { INVESTIGATOR_TEMPLATE_PATH, LIMITED_ACTOR_TEMPLATE_PATH, MODULE_ID } from "../constants.js";
 import { submitNativeActorForm } from "../services/actor-form.js";
 import {
   buildAttributeViewModels,
@@ -15,7 +16,7 @@ import { buildInvestigatorBiographyView } from "../services/investigator-biograp
 import { buildInvestigatorDevelopmentView } from "../services/investigator-development-view-data.js";
 import { buildWeaponViewModels } from "../services/npc-view-data.js";
 import { rollWeaponDamage } from "../services/weapon-damage.js";
-import { trackRangedWeaponUse } from "../services/ammo-consumption.js";
+import { cancelRangedWeaponUse, trackRangedWeaponUse } from "../services/ammo-consumption.js";
 import {
   buildPlayerHudCreationView,
   openPlayerHudCreation
@@ -64,7 +65,18 @@ export class GinzzzuCoC7InvestigatorSheet extends HandlebarsApplicationMixin(Act
     }
   };
 
+  _configureRenderParts(options) {
+    const parts = super._configureRenderParts(options);
+    if (isLimitedActorView(this.document)) {
+      parts.body.template = LIMITED_ACTOR_TEMPLATE_PATH;
+      parts.body.scrollable = [];
+    }
+    return parts;
+  }
+
   async _prepareContext(options) {
+    if (isLimitedActorView(this.document)) return limitedActorContext(this.document);
+
     const context = await super._prepareContext(options);
     const document = this.document;
     const attribs = buildAttributeViewModels(document);
@@ -117,6 +129,12 @@ export class GinzzzuCoC7InvestigatorSheet extends HandlebarsApplicationMixin(Act
 
   async _onRender(context, options) {
     await super._onRender(context, options);
+    if (isLimitedActorView(this.document)) {
+      this.#portraitObserver?.disconnect();
+      this.#portraitObserver = null;
+      return;
+    }
+    if (!this.isEditable) enableReadOnlyNavigation(this.element, ["gci-select-tab", "gci-skill-filter", "gci-skill-search"]);
 
     this.element.classList.add("character", "gci-character-window");
     this.#listen("[data-action=\"gci-toggle-edit\"]", "click", this.#onToggleEdit);
@@ -132,6 +150,7 @@ export class GinzzzuCoC7InvestigatorSheet extends HandlebarsApplicationMixin(Act
     this.#listen("[data-action=\"gci-skill-adjustment\"]", "change", this.#onSkillAdjustmentChange);
     this.#listen("[data-action=\"gci-toggle-occupation-skill\"]", "click", this.#onToggleOccupationSkill);
     this.#listen("[data-action=\"gci-edit-skill\"]", "click", this.#onEditSkill);
+    this.#listen("[data-action=\"gci-delete-skill\"]", "click", this.#onDeleteSkill);
     this.#listen("[data-action=\"gci-add-skill\"]", "click", this.#onAddSkill);
     this.#listen("[data-action=\"gci-adjust-vital\"]", "click", this.#onAdjustVital);
     this.#listen("[data-action=\"gci-weapon-roll\"]", "click", this.#onWeaponRoll);
@@ -373,20 +392,41 @@ export class GinzzzuCoC7InvestigatorSheet extends HandlebarsApplicationMixin(Act
     await skill.sheet.render({ force: true });
   }
 
+  async #onDeleteSkill(event) {
+    event.preventDefault();
+    if (!(this.isEditable && !this.document.system.flags?.locked)) return;
+    const skill = this.#getSkillFromEvent(event);
+    if (!skill) return;
+
+    await this.document.deleteEmbeddedDocuments("Item", [skill.id], { render: false });
+    await this.render({ parts: ["body"] });
+  }
+
   async #onAddSkill(event) {
     event.preventDefault();
     if (!(this.isEditable && !this.document.system.flags?.locked)) return;
 
-    const name = game.i18n.localize(`${MODULE_ID}.Values.NewSkill`);
-    const [skill] = await this.document.createEmbeddedDocuments("Item", [{
-      name,
-      type: "skill",
-      system: {
-        skillName: name,
-        base: "0"
-      }
-    }], { render: false });
+    let created = null;
+    if (typeof this.document.createEmptySkill === "function") {
+      created = await this.document.createEmptySkill(event);
+    } else {
+      const name = game.i18n.localize(`${MODULE_ID}.Values.NewSkill`);
+      const skillModel = CONFIG.Item?.dataModels?.skill;
+      const data = typeof skillModel?.emptyObject === "function"
+        ? skillModel.emptyObject({ name, system: { base: "0" } })
+        : {
+            name,
+            type: "skill",
+            system: {
+              skillName: name,
+              base: "0",
+              properties: { special: false, push: true }
+            }
+          };
+      created = await this.document.createEmbeddedDocuments("Item", [data], { render: false });
+    }
 
+    const skill = created?.[0] ?? null;
     await this.render({ parts: ["body"] });
     if (skill?.sheet) await skill.sheet.render({ force: true });
   }
@@ -442,7 +482,15 @@ export class GinzzzuCoC7InvestigatorSheet extends HandlebarsApplicationMixin(Act
     }
 
     trackRangedWeaponUse(weapon);
-    await this.document.weaponCheck({ uuid: weapon.uuid }, event.shiftKey);
+    try {
+      await this.document.weaponCheck({ uuid: weapon.uuid }, event.shiftKey);
+    } catch (error) {
+      cancelRangedWeaponUse(weapon.uuid);
+      console.error(`${MODULE_ID} | Failed to execute weapon attack roll.`, error);
+      ui.notifications.error(
+        game.i18n.format(`${MODULE_ID}.Notifications.WeaponRollFailed`, { weapon: weapon.name })
+      );
+    }
   }
 
   async #onWeaponSkillRoll(event) {
@@ -522,8 +570,17 @@ export class GinzzzuCoC7InvestigatorSheet extends HandlebarsApplicationMixin(Act
     const type = event.currentTarget.dataset.type;
     if (!["item", "weapon", "armor", "book", "spell"].includes(type)) return;
 
-    if (type === "weapon" && typeof this.document.createEmptyWeapon === "function") {
-      const created = await this.document.createEmptyWeapon(event);
+    const creators = {
+      item: "createEmptyItem",
+      weapon: "createEmptyWeapon",
+      armor: "createEmptyArmor",
+      book: "createEmptyBook",
+      spell: "createEmptySpell"
+    };
+    const methodName = creators[type];
+    if (methodName && typeof this.document[methodName] === "function") {
+      const created = await this.document[methodName](event);
+      await this.render({ parts: ["body"] });
       if (created?.[0]?.sheet) await created[0].sheet.render({ force: true });
       return;
     }

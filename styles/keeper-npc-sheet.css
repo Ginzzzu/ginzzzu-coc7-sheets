@@ -24,6 +24,24 @@
     linear-gradient(145deg, #17211c 0%, var(--gcks-bg-deep) 58%, #0b100e 100%);
 }
 
+.ginzzzu-coc7-sheets .gcs-limited-portrait {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ginzzzu-coc7-sheets .gcs-limited-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  object-fit: contain;
+}
+
 .ginzzzu-coc7-sheets .gcks-sheet {
   position: relative;
   display: flex;

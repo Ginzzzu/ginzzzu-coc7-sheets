@@ -1,0 +1,273 @@
+<div class="ginzzzu-coc7-sheets gcks-sheet gcs-sheet gcs-item-sheet{{#if gcs.isEditing}} gcs-sheet--editing{{/if}}">
+  <header class="gcks-header gcs-header">
+    <div class="gcks-portrait-frame gcs-portrait-frame{{#unless gcs.isEditing}} gcs-portrait-frame--clickable{{/unless}}"{{#unless gcs.isEditing}} data-action="gcs-show-art" title="{{localize 'ginzzzu-coc7-sheets.Actions.ShowArt'}}"{{/unless}}>
+      <img class="gcks-portrait gcs-portrait" src="{{document.img}}"{{#if gcs.isEditing}} data-action="editImage" data-edit="img"{{/if}} alt="{{document.name}}">
+      {{#if gcs.isEditing}}
+        <input class="gcks-portrait-path" type="hidden" name="img" value="{{document.img}}">
+      {{/if}}
+    </div>
+
+    <div class="gcks-identity gcs-identity">
+      {{#unless gcs.isEditing}}
+        <h1 class="gcks-name gcs-name">{{document.name}}</h1>
+        <div class="gcks-subtitle gcs-subtitle">
+          <span>{{localize "ginzzzu-coc7-sheets.ItemTypes.item"}}</span>
+          <span class="gcks-separator">•</span>
+          <span>
+            {{#if gcs.parentContext.isEmbedded}}
+              {{gcs.parentContext.name}}
+            {{else}}
+              {{localize "ginzzzu-coc7-sheets.Context.WorldItem"}}
+            {{/if}}
+          </span>
+        </div>
+        <div class="gcks-document-context gcs-document-context{{#if gcs.parentContext.isEmbedded}} gcks-document-context--token{{/if}}">
+          <i class="fa-solid fa-box-archive"></i>
+          <span>{{localize "ginzzzu-coc7-sheets.ItemTypes.item"}}</span>
+          {{#if gcs.currentPrice}}
+            <small>• {{gcs.currentPrice}} ({{gcs.worldEraName}})</small>
+          {{/if}}
+        </div>
+      {{else}}
+        <label class="gcks-field gcks-field--name">
+          <span>{{localize "ginzzzu-coc7-sheets.Fields.Name"}}</span>
+          <input type="text" name="name" value="{{document.name}}" placeholder="{{localize 'ginzzzu-coc7-sheets.Placeholders.ItemName'}}">
+        </label>
+      {{/unless}}
+    </div>
+
+    {{#if gcs.canEdit}}
+      <button class="gcks-mode-button gcs-mode-button" type="button" data-action="gcs-toggle-edit">
+        {{#unless gcs.isEditing}}
+          <i class="fa-solid fa-pen-to-square"></i>
+          <span>{{localize "ginzzzu-coc7-sheets.Actions.Edit"}}</span>
+        {{else}}
+          <i class="fa-solid fa-check"></i>
+          <span>{{localize "ginzzzu-coc7-sheets.Actions.FinishEditing"}}</span>
+        {{/unless}}
+      </button>
+    {{/if}}
+  </header>
+
+  {{!-- Vitals-style properties bar: Quantity, Weight, Price --}}
+  <section class="gcks-vitals gcs-vitals" aria-label="{{localize 'ginzzzu-coc7-sheets.Sections.Vitals'}}">
+    {{!-- Quantity --}}
+    <div class="gcks-vital gcs-vital" data-prop="quantity">
+      <span class="gcks-vital-label">{{localize "ginzzzu-coc7-sheets.Fields.Quantity"}}</span>
+      {{#if gcs.isEditing}}
+        <div class="gcks-vital-values gcks-vital-values--single">
+          <input type="number" name="system.quantity" value="{{gcs.quantity}}" min="0" step="1" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Quantity'}}">
+        </div>
+      {{else}}
+        <div class="gcks-vital-play">
+          <div class="gcks-vital-readout gcks-vital-readout--single">
+            <strong>{{gcs.quantity}}</strong>
+          </div>
+          {{#if gcs.canEdit}}
+            <div class="gcks-vital-stepper">
+              <button type="button" data-action="gcs-adjust-quantity" data-direction="1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.QuantityIncrease'}}"><i class="fa-solid fa-caret-up"></i></button>
+              <button type="button" data-action="gcs-adjust-quantity" data-direction="-1" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Hints.QuantityDecrease'}}"><i class="fa-solid fa-caret-down"></i></button>
+            </div>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+
+    {{!-- Weight --}}
+    <div class="gcks-vital gcs-vital" data-prop="weight">
+      <span class="gcks-vital-label">{{localize "ginzzzu-coc7-sheets.Fields.Weight"}}</span>
+      {{#if gcs.isEditing}}
+        <div class="gcks-vital-values gcks-vital-values--single">
+          <input type="text" name="system.weight" value="{{gcs.weight}}" placeholder="0" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Weight'}}">
+        </div>
+      {{else}}
+        <div class="gcks-vital-play">
+          <div class="gcks-vital-readout gcks-vital-readout--single">
+            <strong>{{#if gcs.weight}}{{gcs.weight}}{{else}}0{{/if}}</strong>
+          </div>
+        </div>
+      {{/if}}
+    </div>
+
+    {{!-- Price for Current Era --}}
+    <div class="gcks-vital gcs-vital" data-prop="price">
+      <span class="gcks-vital-label" title="{{gcs.worldEraName}}">{{localize "ginzzzu-coc7-sheets.Fields.Price"}}</span>
+      {{#if gcs.isEditing}}
+        <div class="gcks-vital-values gcks-vital-values--single">
+          <input type="text" name="system.price.{{gcs.worldEra}}" value="{{gcs.currentPrice}}" placeholder="0" aria-label="{{localize 'ginzzzu-coc7-sheets.Fields.Price'}}">
+        </div>
+      {{else}}
+        <div class="gcks-vital-play">
+          <div class="gcks-vital-readout gcks-vital-readout--single">
+            <strong>{{#if gcs.currentPrice}}{{gcs.currentPrice}}{{else}}—{{/if}}</strong>
+          </div>
+        </div>
+      {{/if}}
+    </div>
+  </section>
+
+  {{!-- Main Workspace Panel with Tabs --}}
+  <main class="gcs-main">
+    <section class="gcks-panel gcks-workspace gcs-workspace">
+      <nav class="gcks-tabs gcs-tabs" aria-label="{{localize 'ginzzzu-coc7-sheets.Sections.Workspace'}}">
+        <button class="gcks-tab{{#if gcs.tabs.description.active}} active{{/if}}" type="button" data-action="gcs-select-tab" data-tab="description">
+          <i class="fa-solid fa-address-card"></i><span>{{localize "ginzzzu-coc7-sheets.Tabs.Description"}}</span>
+        </button>
+        {{#if gcs.tabs.keeper.visible}}
+          <button class="gcks-tab gcs-tab--keeper{{#if gcs.tabs.keeper.active}} active{{/if}}" type="button" data-action="gcs-select-tab" data-tab="keeper">
+            <i class="game-icon game-icon-tentacles-skull"></i><span>{{localize "ginzzzu-coc7-sheets.Tabs.Keeper"}}</span>
+            {{#if gcs.hasKeeperNotes}}<span class="gcs-tab-dot"></span>{{/if}}
+          </button>
+        {{/if}}
+        <button class="gcks-tab{{#if gcs.tabs.prices.active}} active{{/if}}" type="button" data-action="gcs-select-tab" data-tab="prices">
+          <i class="fa-solid fa-coins"></i><span>{{localize "ginzzzu-coc7-sheets.Tabs.Prices"}}</span>
+        </button>
+        <button class="gcks-tab{{#if gcs.tabs.effects.active}} active{{/if}}" type="button" data-action="gcs-select-tab" data-tab="effects">
+          <i class="fa-solid fa-wand-magic-sparkles"></i><span>{{localize "ginzzzu-coc7-sheets.Tabs.Effects"}}</span>
+          {{#if gcs.hasEffects}}<span class="gcs-tab-badge">{{gcs.effects.length}}</span>{{/if}}
+        </button>
+      </nav>
+
+      <div class="gcks-tab-content gcs-tab-content">
+        {{!-- Description Tab --}}
+        {{#if gcs.tabs.description.active}}
+          <div class="gcks-panel-heading gcks-panel-heading--inside">
+            <h2>{{localize "ginzzzu-coc7-sheets.Sections.Description"}}</h2>
+            <i class="fa-solid fa-scroll"></i>
+          </div>
+
+          <section class="gcks-rich-text gcs-rich-text gcks-scroll-region">
+            {{#if gcs.isEditing}}
+              <prose-mirror name="system.description.value" value="{{document.system.description.value}}" data-document-uuid="{{document.uuid}}" toggled>
+                {{{gcs.enrichedDescriptionValue}}}
+              </prose-mirror>
+            {{else}}
+              {{#if document.system.description.value}}
+                {{{gcs.enrichedDescriptionValue}}}
+              {{else}}
+                <p class="gcks-empty">{{localize "ginzzzu-coc7-sheets.Empty.Description"}}</p>
+              {{/if}}
+            {{/if}}
+          </section>
+        {{/if}}
+
+        {{!-- Keeper Tab --}}
+        {{#if gcs.tabs.keeper.active}}
+          <div class="gcks-panel-heading gcks-panel-heading--inside gcks-panel-heading--keeper">
+            <h2>{{localize "ginzzzu-coc7-sheets.Sections.KeeperNotes"}}</h2>
+            <i class="game-icon game-icon-tentacles-skull"></i>
+          </div>
+
+          <section class="gcks-rich-text gcks-rich-text--keeper gcs-rich-text gcks-scroll-region">
+            {{#if gcs.isEditing}}
+              <prose-mirror name="system.description.keeper" value="{{document.system.description.keeper}}" data-document-uuid="{{document.uuid}}" toggled>
+                {{{gcs.enrichedDescriptionKeeper}}}
+              </prose-mirror>
+            {{else}}
+              {{#if document.system.description.keeper}}
+                {{{gcs.enrichedDescriptionKeeper}}}
+              {{else}}
+                <p class="gcks-empty">{{localize "ginzzzu-coc7-sheets.Empty.KeeperNotes"}}</p>
+              {{/if}}
+            {{/if}}
+          </section>
+        {{/if}}
+
+        {{!-- Era Prices Tab --}}
+        {{#if gcs.tabs.prices.active}}
+          <div class="gcks-panel-heading gcks-panel-heading--inside">
+            <h2>{{localize "CoC7.EraAvailability"}}</h2>
+            <span>{{localize "ginzzzu-coc7-sheets.Hints.EraPrices"}}</span>
+          </div>
+
+          <section class="gcs-prices-content gcks-scroll-region">
+            {{#if gcs.isEditing}}
+              <div class="gcs-era-toggles">
+                {{#each gcs.eras as |era|}}
+                  <button class="gcks-mode-button gcs-era-btn{{#if era.isEnabled}} gcs-era-btn--active{{/if}}" type="button" data-action="gcs-toggle-era" data-era="{{era.id}}">
+                    <i class="{{era.icon}}"></i>
+                    <span>{{era.name}}</span>
+                  </button>
+                {{/each}}
+              </div>
+
+              <div class="gcs-era-grid">
+                {{#each gcs.eras as |era|}}
+                  {{#if era.isEnabled}}
+                    <label class="gcks-derived-stat gcs-era-stat{{#if era.isWorldEra}} gcs-era-stat--current{{/if}}">
+                      <span>
+                        <i class="{{era.icon}}"></i> {{era.name}}
+                        {{#if era.isWorldEra}}<small>({{localize "ginzzzu-coc7-sheets.Values.CurrentEra"}})</small>{{/if}}
+                      </span>
+                      <input type="text" name="system.price.{{era.id}}" value="{{era.price}}" placeholder="0">
+                    </label>
+                  {{/if}}
+                {{/each}}
+              </div>
+            {{else}}
+              {{#if gcs.hasActiveEras}}
+                <div class="gcs-era-grid">
+                  {{#each gcs.eras as |era|}}
+                    {{#if era.isEnabled}}
+                      <div class="gcks-derived-stat gcs-era-stat{{#if era.isWorldEra}} gcs-era-stat--current{{/if}}">
+                        <span>
+                          <i class="{{era.icon}}"></i> {{era.name}}
+                          {{#if era.isWorldEra}}<small>({{localize "ginzzzu-coc7-sheets.Values.CurrentEra"}})</small>{{/if}}
+                        </span>
+                        <strong>{{era.price}}</strong>
+                      </div>
+                    {{/if}}
+                  {{/each}}
+                </div>
+              {{else}}
+                <p class="gcks-empty">{{localize "ginzzzu-coc7-sheets.Empty.EraPrices"}}</p>
+              {{/if}}
+            {{/if}}
+          </section>
+        {{/if}}
+
+        {{!-- Active Effects Tab --}}
+        {{#if gcs.tabs.effects.active}}
+          <div class="gcks-panel-heading gcks-panel-heading--inside">
+            <h2>{{localize "ginzzzu-coc7-sheets.Sections.ActiveEffects"}}</h2>
+            {{#if gcs.canEdit}}
+              <button class="gcks-icon-button" type="button" data-action="gcs-add-effect" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Actions.AddEffect'}}">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            {{/if}}
+          </div>
+
+          <section class="gcs-effects-content gcks-scroll-region">
+            {{#if gcs.hasEffects}}
+              <div class="gcs-effects-list">
+                {{#each gcs.effects as |effect|}}
+                  <div class="gcks-skill-row gcs-effect-row{{#if effect.disabled}} gcs-effect-row--disabled{{/if}}" data-effect-id="{{effect.id}}">
+                    <div class="gcs-effect-identity">
+                      <img class="gcs-effect-icon" src="{{effect.img}}" alt="{{effect.name}}">
+                      <span class="skill-name">{{effect.name}}</span>
+                    </div>
+                    {{#if ../gcs.canEdit}}
+                      <div class="gcks-skill-controls gcs-effect-controls">
+                        <button class="gcks-icon-button" type="button" data-action="gcs-toggle-effect" data-tooltip="{{#if effect.disabled}}{{localize 'ginzzzu-coc7-sheets.Actions.EnableEffect'}}{{else}}{{localize 'ginzzzu-coc7-sheets.Actions.DisableEffect'}}{{/if}}">
+                          <i class="fa-solid {{#if effect.disabled}}fa-toggle-off{{else}}fa-toggle-on{{/if}}"></i>
+                        </button>
+                        <button class="gcks-icon-button" type="button" data-action="gcs-edit-effect" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Actions.Edit'}}">
+                          <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="gcks-icon-button gcks-icon-button--danger" type="button" data-action="gcs-delete-effect" data-tooltip="{{localize 'ginzzzu-coc7-sheets.Actions.DeleteEffect'}}">
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </div>
+                    {{/if}}
+                  </div>
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="gcks-empty">{{localize "ginzzzu-coc7-sheets.Empty.ActiveEffects"}}</p>
+            {{/if}}
+          </section>
+        {{/if}}
+      </div>
+    </section>
+  </main>
+</div>

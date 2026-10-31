@@ -1,4 +1,5 @@
-import { KEEPER_NPC_TEMPLATE_PATH, MODULE_ID } from "../constants.js";
+import { isLimitedActorView, limitedActorContext, enableReadOnlyNavigation } from "../services/actor-sheet-access.js";
+import { KEEPER_NPC_TEMPLATE_PATH, LIMITED_ACTOR_TEMPLATE_PATH, MODULE_ID } from "../constants.js";
 import { submitNativeActorForm } from "../services/actor-form.js";
 import { buildAttributeViewModels, buildCharacteristicViewModels } from "../services/character-view-data.js";
 import {
@@ -12,7 +13,7 @@ import {
   enrichNpcText
 } from "../services/npc-view-data.js";
 import { rollWeaponDamage } from "../services/weapon-damage.js";
-import { trackRangedWeaponUse } from "../services/ammo-consumption.js";
+import { cancelRangedWeaponUse, trackRangedWeaponUse } from "../services/ammo-consumption.js";
 import {
   buildConditionViewModels,
   buildDocumentContextViewModel
@@ -66,7 +67,18 @@ export class GinzzzuCoC7KeeperNpcSheet extends HandlebarsApplicationMixin(ActorS
     }
   };
 
+  _configureRenderParts(options) {
+    const parts = super._configureRenderParts(options);
+    if (isLimitedActorView(this.document)) {
+      parts.body.template = LIMITED_ACTOR_TEMPLATE_PATH;
+      parts.body.scrollable = [];
+    }
+    return parts;
+  }
+
   async _prepareContext(options) {
+    if (isLimitedActorView(this.document)) return limitedActorContext(this.document);
+
     const context = await super._prepareContext(options);
     const document = this.document;
     const isLocation = isLocationActor(document);
@@ -156,6 +168,12 @@ export class GinzzzuCoC7KeeperNpcSheet extends HandlebarsApplicationMixin(ActorS
 
   async _onRender(context, options) {
     await super._onRender(context, options);
+    if (isLimitedActorView(this.document)) {
+      this.#portraitObserver?.disconnect();
+      this.#portraitObserver = null;
+      return;
+    }
+    if (!this.isEditable) enableReadOnlyNavigation(this.element, ["gcks-select-tab"]);
 
     const isCreature = this.document.type === "creature";
     const isLocation = isLocationActor(this.document);
@@ -393,7 +411,15 @@ export class GinzzzuCoC7KeeperNpcSheet extends HandlebarsApplicationMixin(ActorS
     // The synchronization service only repairs a missing update and therefore
     // cannot double-spend ammunition when the system handles it correctly.
     trackRangedWeaponUse(weapon);
-    await this.document.weaponCheck({ uuid: weapon.uuid }, event.shiftKey);
+    try {
+      await this.document.weaponCheck({ uuid: weapon.uuid }, event.shiftKey);
+    } catch (error) {
+      cancelRangedWeaponUse(weapon.uuid);
+      console.error(`${MODULE_ID} | Failed to execute weapon attack roll.`, error);
+      ui.notifications.error(
+        game.i18n.format(`${MODULE_ID}.Notifications.WeaponRollFailed`, { weapon: weapon.name })
+      );
+    }
   }
 
   async #onWeaponSkillRoll(event) {
@@ -519,6 +545,9 @@ export class GinzzzuCoC7KeeperNpcSheet extends HandlebarsApplicationMixin(ActorS
     event.preventDefault();
     const itemUuid = event.currentTarget.closest(".item")?.dataset.itemUuid;
     const item = itemUuid ? await fromUuid(itemUuid) : null;
-    await item?.delete();
+    if (item) {
+      await item.delete();
+      await this.render({ parts: ["body"] });
+    }
   }
 }

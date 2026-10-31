@@ -1,6 +1,7 @@
 import { MODULE_ID } from "../constants.js";
 import { getEffectiveSkillValue } from "./skill-values.js";
 import { buildWeaponDamageFormula } from "./weapon-damage.js";
+import { formatUsesPerRound } from "./weapon-compatibility.js";
 
 const TEXT_EDITOR = foundry.applications.ux?.TextEditor?.implementation ?? globalThis.TextEditor;
 
@@ -80,7 +81,7 @@ export function buildWeaponViewModels(document) {
         bullets: weapon.system?.bullets ?? null,
         malfunction: weapon.system?.malfunction ?? null,
         hasMalfunction: weapon.system?.malfunction !== null && weapon.system?.malfunction !== undefined,
-        usesPerRound: weapon.system?.usesPerRound?.normal ?? ""
+        usesPerRound: formatUsesPerRound(weapon)
       };
     });
 }

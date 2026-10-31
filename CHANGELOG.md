@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.1.1
+
+- Restored portrait-only views for players with Limited Actor access on investigator, NPC, creature, and location sheets.
+- Limited views no longer prepare full character data or attach normal sheet action handlers.
+- Observers can navigate sheet tabs and use investigator skill filters and search while editing and gameplay controls remain disabled.
+- Preserved the existing Owner and GM workflows and Actor ownership settings.
+
+## 1.1
+
+- Added an alternative silver-metallic sheet for native CoC7 Item documents (type `item`).
+- Features a dark obsidian/slate metal theme with cold silver accents, engraved borders, and vintage serif typography.
+- Supports «View / Edit» mode toggling with live quantity adjustments (+/- buttons with Shift for 5), weight, and world era pricing.
+- Includes tabs for rich-text Description (ProseMirror), Keeper Secrets (GM-only), Era Availability Prices, and Active Effects.
+- Added «Share with players» action to post formatted clue/item cards directly into the game chat.
+- Added quick full-size artwork viewer (`ImagePopout`) on portrait click.
+
 ## 1.0
 - Release version.
 
