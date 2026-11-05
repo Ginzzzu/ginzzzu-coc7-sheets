@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.2
+
+- Fixed investigator biography edits potentially deleting other sections or losing their titles and text.
+- Biography title and rich-text changes now merge into the complete native CoC7 biography array before saving, preserving untouched sections.
+- Added regression checks for biography edits, full form submissions, empty values, and existing form access restrictions.
+
 ## 1.1.1
 
 - Restored portrait-only views for players with Limited Actor access on investigator, NPC, creature, and location sheets.

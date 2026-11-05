@@ -1,7 +1,21 @@
 import { MODULE_ID } from "../constants.js";
 
 function getSubmittedValue(submitData, fieldName) {
+  if (Object.hasOwn(submitData, fieldName)) return submitData[fieldName];
   return foundry.utils.getProperty(submitData, fieldName);
+}
+
+function mergeBiography(document, changes) {
+  // CoC7 stores biography as an ArrayField. Indexed object updates must be
+  // merged into the existing array or Foundry can replace the other sections.
+  const biography = foundry.utils.deepClone(document.system.biography ?? []);
+  for (const [index, section] of Object.entries(changes)) {
+    if (!/^\d+$/.test(index) || !biography[index] || !section) continue;
+    for (const key of ["title", "value"]) {
+      if (section[key] !== undefined) biography[index][key] = section[key];
+    }
+  }
+  return biography;
 }
 
 /**
@@ -45,11 +59,26 @@ export async function submitNativeActorForm(event, form, formData) {
     }
 
     if (fieldName) {
-      await this.document.update({ [fieldName]: getSubmittedValue(submitData, fieldName) });
+      const value = getSubmittedValue(submitData, fieldName);
+      if (value === undefined) return;
+      const biographyMatch = fieldName.match(/^system\.biography\.(\d+)\.(title|value)$/);
+      if (biographyMatch) {
+        await this.document.update({
+          "system.biography": mergeBiography(this.document, {
+            [biographyMatch[1]]: { [biographyMatch[2]]: value }
+          })
+        });
+        return;
+      }
+      await this.document.update({ [fieldName]: value });
       return;
     }
 
-    await this.document.update(submitData);
+    const updateData = foundry.utils.expandObject(submitData);
+    if (updateData.system?.biography) {
+      updateData.system.biography = mergeBiography(this.document, updateData.system.biography);
+    }
+    await this.document.update(updateData);
   } catch (error) {
     console.error(`${MODULE_ID} | Failed to update the CoC7 Actor.`, error);
   }

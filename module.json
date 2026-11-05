@@ -2,7 +2,7 @@
   "id": "ginzzzu-coc7-sheets",
   "title": "Ginzzzu's CoC7 Sheets",
   "description": "Modern opt-in CoC7 sheets for investigators, Keeper NPCs, creatures, and locations.<br><a href=\"https://discord.gg/bHA7JhVUCX\">Discord</a> · <a href=\"https://boosty.to/ginzzzu\">Boosty</a>",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "authors": [
     {
       "name": "Ginzzzu"
@@ -10,7 +10,7 @@
   ],
   "url": "https://github.com/Ginzzzu/ginzzzu-coc7-sheets",
   "manifest": "https://github.com/Ginzzzu/ginzzzu-coc7-sheets/releases/latest/download/module.json",
-  "download": "https://github.com/Ginzzzu/ginzzzu-coc7-sheets/releases/download/v1.1.1/ginzzzu-coc7-sheets.zip",
+  "download": "https://github.com/Ginzzzu/ginzzzu-coc7-sheets/releases/download/v1.1.2/ginzzzu-coc7-sheets.zip",
   "compatibility": {
     "minimum": "14",
     "verified": "14.365"
